@@ -1,8 +1,14 @@
+consumerKey = 'JB2xtTk0AkYuHXKOGaIMrNlUF'
+consumerSecret = '3fwYUygwZoIwTnXCAs6thHmzC6bhlZ8PKjNPAWH1ly0yeyhJPp'
+accessToken = '2494659504-3400UHuDCBO5L99Lg4vkGaKXFgQnbgGsnrxBIeJ'
+accessTokenSecret = 'lX0bDuQRuEYkHMeXUr5eRUDYwg27M0i2iO5oFYel8Rmoh'
+
 import tweepy
 import datetime
 import os
 import pymongo
 from pymongo import MongoClient
+import json
 
 os.chdir('/home/ec2-user')
 
@@ -16,15 +22,20 @@ def getLangValue(lang):
 
 def incrementLang(lang):
     post = db.posts.find_one({'lang': lang})
-    post['count'] = post['count'] + 1
-    db.posts.save(post)
+    if post is None:
+        db.posts.insert({'lang': lang, 'count': 1})
+    else:
+        post['count'] = post['count'] + 1
+        db.posts.save(post)
 
 class StdOutListener(tweepy.StreamListener):
     def on_data(self, data):
-        print(type(data))
-
+        out = json.loads(data)
+        lang = out.get('lang')
+        incrementLang(lang)
+        
         return True
-
+    
     def on_error(self, status):
         print('error!')
         f = open('errorlong.txt', 'w')
@@ -42,3 +53,4 @@ auth = tweepy.OAuthHandler(consumerKey, consumerSecret)
 auth.set_access_token(accessToken, accessTokenSecret)
 
 stream = tweepy.Stream(auth, l)
+stream.sample()
