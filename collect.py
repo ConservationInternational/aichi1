@@ -12,28 +12,35 @@ import json
 
 os.chdir('/home/ec2-user')
 
-def getLangValue(lang):
-    post = db.posts.find_one({'lang': lang})
+def getValue(lang, country):
+    post = db.find_one({'lang': lang, 'country': country})
     if post is None:
-        db.posts.insert({'lang': lang, 'count': 0})
+        db.insert({'lang': lang, 'country': country, 'count': 0})
         return 0
     else:
         return post['count']
 
-def incrementLang(lang):
-    post = db.posts.find_one({'lang': lang})
+def incrementValue(lang, country):
+    post = db.find_one({'lang': lang, 'country': country})
     if post is None:
-        db.posts.insert({'lang': lang, 'count': 1})
+        db.insert({'lang': lang, 'country': country, 'count': 1})
     else:
         post['count'] = post['count'] + 1
-        db.posts.save(post)
+        db.save(post)
 
 class StdOutListener(tweepy.StreamListener):
     def on_data(self, data):
         out = json.loads(data)
+
         lang = out.get('lang')
-        incrementLang(lang)
         
+        if out.get('place') is not None:
+            cty = out.get('place').get('country_code')
+        else:
+            cty = 'xx'
+        
+        incrementValue(lang, cty)        
+
         return True
     
     def on_error(self, status):
@@ -45,7 +52,7 @@ class StdOutListener(tweepy.StreamListener):
 #Connect to MongoDB
 client = MongoClient()
 client = MongoClient('localhost', 27017)
-db = client.TWITTER.test_langdef
+db = client.TWITTER['country-language']
 
 #Connect to Twitter
 l = StdOutListener()
