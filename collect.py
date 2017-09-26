@@ -13,8 +13,6 @@ import boto3
 
 s3 = boto3.resource('s3')
 
-today = str(datetime.datetime.now() - datetime.timedelta(1))[:10]
-
 os.chdir('/home/ec2-user')
 
 def getValue(lang, country):
@@ -45,7 +43,8 @@ class StdOutListener(tweepy.StreamListener):
             cty = 'xx'
 
         if out.get('coordinates') is not None:
-            s3.Bucket('geo-raw').put_object(Key=today + '/' + str(datetime.datetime.now()), Body=data)
+            s3.Bucket('geo-raw').put_object(Key=str(datetime.datetime.now() - datetime.timedelta(1))[:10]
+ + '/' + str(datetime.datetime.now()), Body=data)
         
         incrementValue(lang, cty)        
 

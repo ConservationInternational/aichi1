@@ -1,5 +1,5 @@
 #!/bin/sh
-cd /home/ec2-user/aichi1
+#cd /home/ec2-user/aichi1
 killall python
-python collect.py
+python aichi1/collect.py
 
