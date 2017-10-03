@@ -8,6 +8,7 @@ library(pageviews)
 df <- data.frame()
 n <- 0
 for (i in f$V1){
+  tryCatch({
   t <- gsub(' ', '_', i)
   
   url <- paste0("http://en.wikipedia.org/wiki/", t)
@@ -25,6 +26,11 @@ for (i in f$V1){
   n <- n + 1
   
   cat(paste0(round(n/nrow(f)*100, 4), '%'), i, '\n')
+  }, error=function(e){})
+
+  if (n %% 10000 == 0){
+    write.csv(df, 'All_Species.csv', row.names=F)
+  } 
 }
 
 write.csv(df, 'All_Species.csv', row.names=F)
