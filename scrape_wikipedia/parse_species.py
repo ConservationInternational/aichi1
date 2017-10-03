@@ -5,6 +5,10 @@ import pandas as pd
 
 out = pd.read_csv('D://Documents and Settings/mcooper/Desktop/2017-09-29-archive-complete/taxa.txt', sep='\t')
 
+out = out[(out['phylum'].str.contains('Tracheophyta|Chordata|Mollusca')) & 
+          (out['taxonRank'].str.contains("species")) &
+          (out['taxonomicStatus'].str.contains("accepted name"))]
+
 def getName(tax):
     sel = tax.split(' ')[0:2]
     if len(sel) < 2:
