@@ -20,17 +20,17 @@ for (i in f$V1){
     
     views <- article_pageviews(project='en.wikipedia', article = t)
     
-    df <- bind_rows(df, data.frame(species=i, size=out, views=views))
+    df <- bind_rows(df, data.frame(species=i, size=out, views=views$views))
   }
 
   n <- n + 1
   
   cat(paste0(round(n/nrow(f)*100, 4), '%'), i, '\n')
-  }, error=function(e){})
 
   if (n %% 10000 == 0){
     write.csv(df, 'All_Species.csv', row.names=F)
   } 
+  }, error=function(e){})
 }
 
 write.csv(df, 'All_Species.csv', row.names=F)
