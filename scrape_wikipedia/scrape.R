@@ -5,7 +5,6 @@ library(dplyr)
 library(RCurl)
 library(pageviews)
 
-df <- data.frame()
 n <- 0
 for (i in f$V1){
   tryCatch({
@@ -20,17 +19,12 @@ for (i in f$V1){
     
     views <- article_pageviews(project='en.wikipedia', article = t)
     
-    df <- bind_rows(df, data.frame(species=i, size=out, views=views$views))
+    write.csv(data.frame(species=i, size=out, views=views$views), paste0('AllSpecies/', t, '.csv'), row.names=F)
   }
 
   n <- n + 1
   
   cat(paste0(round(n/nrow(f)*100, 4), '%'), i, '\n')
 
-  if (n %% 10000 == 0){
-    write.csv(df, 'All_Species.csv', row.names=F)
-  } 
   }, error=function(e){})
 }
-
-write.csv(df, 'All_Species.csv', row.names=F)
