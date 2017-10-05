@@ -23,5 +23,5 @@ for (i in which(f$V1=='Stenoglottis inandensis'):length(f$V1)){
 
   cat(paste0(round(i/nrow(f)*100, 4), '%'), Sys.time(), f$V1[i], '\n')
 
-  }, error=function(e){cat(f$V1[1], '\n', file='errors.txt', append=T)})
+  }, error=function(e){cat(f$V1[i], '\n', file='errors.txt', append=T)})
 }
