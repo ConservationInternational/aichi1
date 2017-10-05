@@ -5,9 +5,10 @@ library(dplyr)
 library(RCurl)
 library(pageviews)
 
-for (i in which(f$V1=='Stenoglottis inandensis'):length(f$V1)){
+n <- 0
+for (i in f$V1){
   tryCatch({
-  t <- gsub(' ', '_', f$V1[i])
+  t <- gsub(' ', '_', i)
   
   url <- paste0("http://en.wikipedia.org/wiki/", t)
   
@@ -18,10 +19,12 @@ for (i in which(f$V1=='Stenoglottis inandensis'):length(f$V1)){
     
     views <- article_pageviews(project='en.wikipedia', article = t)
     
-    write.csv(data.frame(species=f$V1[i], size=out, views=views$views), paste0('AllSpecies/', t, '.csv'), row.names=F)
+    write.csv(data.frame(species=i, size=out, views=views$views), paste0('AllSpecies/', t, '.csv'), row.names=F)
   }
 
-  cat(paste0(round(i/nrow(f)*100, 4), '%'), f$V1[i], '\n')
+  n <- n + 1
+  
+  cat(paste0(round(n/nrow(f)*100, 4), '%'), i, '\n')
 
   }, error=function(e){})
 }
