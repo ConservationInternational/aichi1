@@ -43,7 +43,7 @@ class StdOutListener(tweepy.StreamListener):
             cty = 'xx'
 
         if out.get('coordinates') is not None:
-            s3.Bucket('geo-raw').put_object(Key=str(datetime.datetime.now() - datetime.timedelta(1))[:10]
+            s3.Bucket('geo-raw').put_object(Key=str(datetime.datetime.now())[:10]
  + '/' + str(datetime.datetime.now()), Body=data)
         
         incrementValue(lang, cty)        
