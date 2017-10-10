@@ -1,3 +1,4 @@
 scrape_wikipedia/AllSpecies/*
 scrape_wikipedia/errors.txt
 scrape_wikipedia/AllSpecies/Zygochloa_paradoxa.csv
+build_geolocation_database/*.txt
