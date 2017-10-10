@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 cities = pd.read_csv('D://Documents and Settings/mcooper/GitHub/aichi1/build_geolocation_database/cities15000.txt', sep='\t', 
                      names=['geonameid','name','asciiname','alternatenames','latitude','longitude','feature_class','feature_code','country','cc2','admin1_code','admin2_code','admin3_code','admin4_code','population','elevation','dem','timezone','modification date'])
@@ -17,16 +18,22 @@ alladmin = pd.read_csv('D://Documents and Settings/mcooper/GitHub/aichi1/build_g
 #ADM1 = admin 1
 #ADM2 = admin 2
 
-admin = alladmin[alladmin['feature_code'].isin(['PCLI', 'ADM1', 'ADM2'])]
+country = alladmin[alladmin['feature_code'].isin(['PCLI'])]
+country['admin'] = country['name']
+country['city'] = ''
+country = country[['city', 'admin', 'asciiname', 'alternatenames', 'country']]
+
+admin = alladmin[alladmin['feature_code'].isin(['ADM1', 'ADM2'])]
 admin['admin'] = admin['name']
 admin['city'] = ''
 admin = admin[['city', 'admin', 'asciiname', 'alternatenames', 'country']]
 
-dat = pd.concat([cities, admin])
+dat = pd.concat([admin, cities, country])
 
 #make aliases
 dat['comma'] = ','
-dat['aliases'] = (dat['admin'] + ',' + dat['asciiname'] + dat['comma'] + dat['alternatenames']).apply(lambda x: str(x).split(','))
+dat.alternatenames.fillna(dat.admin, inplace=True)
+dat['aliases'] = (dat['admin'] + dat['comma'] + dat['asciiname'] + dat['comma'] + dat['alternatenames']).apply(lambda x: str(x).split(','))
 dat['id'] = map(str, range(0, dat.shape[0]))
 
 dat = dat[['city', 'admin', 'asciiname', 'aliases','country', 'id']]
