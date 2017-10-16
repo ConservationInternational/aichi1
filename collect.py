@@ -10,30 +10,57 @@ import pymongo
 from pymongo import MongoClient
 import json
 import boto3
+import pandas as pd
+import carmen
+
+resolver = carmen.get_resolver(order=['profile'])
+resolver.load_locations()
+
+issues = pd.read_csv('issues.csv')
+species = pd.read_csv('species_list.csv', header=None)
 
 s3 = boto3.resource('s3')
 
 os.chdir('/home/ec2-user')
 
-def getValue(lang, country):
-    post = db.find_one({'lang': lang, 'country': country})
+def increment(incDict):
+    post = db.find_one(incDict)
     if post is None:
-        db.insert({'lang': lang, 'country': country, 'count': 0})
-        return 0
-    else:
-        return post['count']
+        
+        db.insert(
 
-def incrementValue(lang, country):
-    post = db.find_one({'lang': lang, 'country': country})
+def incrementIssueValue(month, country, issue, day, language):
+    post = db.find_one({{'month': month, 'country': country, 'issue': issue, 'day': day, 'language': language}})
     if post is None:
-        db.insert({'lang': lang, 'country': country, 'count': 1})
+        db.insert({'month': month, 'date': day, 'country': country, 'issue': issue, 'day': day, 'language': language, 'count': 1})
     else:
         post['count'] = post['count'] + 1
         db.save(post)
 
+def incrementSpeciesValue(month, country, species, day):
+    post = db.find_one({'month': month, 'country': country, 'species': species, 'day', day})
+    if post is None:
+        db.insert({'month': month, 'country': country, 'species': species, 'dau', day, 'count': 1})
+    else:
+        post['count'] = post['count'] + 1
+        db.save(post)
+
+def incrementAnyValue(month, 
+
 class StdOutListener(tweepy.StreamListener):
     def on_data(self, data):
+        month = str(datetime.datetime.now())[:7]
+        day = str(datetime.datetime.now())[8:10]
+
         out = json.loads(data)
+
+        if out.get('place') is not None and out.get('place') != '':
+            country = out.get('place').get('country_code')
+        else:
+            country = resolver.resolve_tweet(out)[1].country
+        
+        for s in species[0]:
+            if s in out.get('text')
 
         lang = out.get('lang')
         
