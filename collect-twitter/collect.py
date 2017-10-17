@@ -13,6 +13,8 @@ import boto3
 import pandas as pd
 import carmen
 
+os.chdir('/home/ec2-user/aichi1/collect-twitter/')
+
 resolver = carmen.get_resolver(order=['profile'])
 resolver.load_locations()
 
@@ -27,8 +29,6 @@ client = MongoClient()
 client = MongoClient('localhost', 27017)
 twittercon = client.TWITTER['TWITTER-DETAIL']
 baselinecon = client.TWITTER['TWITTER-BASELINE']
-
-os.chdir('/home/ec2-user')
 
 def increment(incDict, incStr, db):
     """Takes a dictionary, finds documents in already established db 
