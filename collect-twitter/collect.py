@@ -15,17 +15,17 @@ import carmen
 
 os.chdir('/home/ec2-user/aichi1/collect-twitter/')
 
+print('Load geocoding resolver')
 resolver = carmen.get_resolver(order=['profile'])
 resolver.load_locations()
 
-issues = pd.read_csv('issues.csv')
-issues_melt = pd.melt(issues.drop('google_topic_id', axis=1)
-species = pd.read_csv('species_list.csv', header=None)
+issues = pd.read_csv('issues.csv', encoding='utf-8')
+issues_melt = pd.melt(issues.drop('google_topic_id', axis=1))
+species = pd.read_csv('species_list.csv', header=None, encoding='utf-8')
 
 s3 = boto3.resource('s3')
 
 #Connect to MongoDB
-client = MongoClient()
 client = MongoClient('localhost', 27017)
 twittercon = client.TWITTER['TWITTER-DETAIL']
 baselinecon = client.TWITTER['TWITTER-BASELINE']
@@ -39,8 +39,11 @@ def increment(incDict, incStr, db):
     if post is None:
         incDict[incStr] = 1      
         db.insert(incDict)
-    else:
+    elif incStr in post:
         post[incStr] = post[incStr] + 1
+        db.save(post)
+    else:
+        post[incStr] = 1
         db.save(post)
 
 def look_using_generator(df, value):
@@ -53,7 +56,7 @@ class StdOutListener(tweepy.StreamListener):
     def on_data(self, data):
         now = str(datetime.datetime.now())
         month = now[:7]
-        day = now()[:10]
+        day = now[:10]
 
         out = json.loads(data)
         
@@ -66,7 +69,9 @@ class StdOutListener(tweepy.StreamListener):
         if out.get('place') is not None and out.get('place') != '':
             country = out.get('place').get('country_code')
         else:
-            country = resolver.resolve_tweet(out)[1].country
+            country = resolver.resolve_tweet(out)
+            if country:
+                country = country[1].country
         if country:
             increment({'country': country, 'month': month, 'day': day}, 'baseline', baselinecon)
         else:
@@ -84,7 +89,7 @@ class StdOutListener(tweepy.StreamListener):
                     anywteet = False
 
         #Check issues
-        for i in issues_melt[1]:
+        for i in issues_melt['value']:
             if i.lower() in out.get('text').lower():
                 row,lang = look_using_generator(issues, i)[0]
                 eng = issues.get_value(row, 'en')
@@ -97,15 +102,16 @@ class StdOutListener(tweepy.StreamListener):
 
 
     def on_error(self, status):
-        print('error!')
+        print('error!' + str(status))
         f = open('errorlong.txt', 'w')
         f.write(str(datetime.datetime.now())+str(status))
         f.close()
 
-#Connect to Twitter
+print('Connect to Twitter')
 l = StdOutListener()
 auth = tweepy.OAuthHandler(consumerKey, consumerSecret)
 auth.set_access_token(accessToken, accessTokenSecret)
 
 stream = tweepy.Stream(auth, l)
+print('Begin sampling')
 stream.sample()
