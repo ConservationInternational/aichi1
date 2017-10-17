@@ -1,0 +1,35 @@
+DB: PROD
+
+collection: TWITTER-BASELINE
+doc = {
+month:
+day:
+country:
+baseline:
+any:
+}
+
+collection: TWITTER-DETAILED
+doc = {
+month:
+
+day:
+
+country:
+
+issue:
+
+language:
+}
+
+doc = {
+month:
+
+day:
+
+country:
+
+issue:
+
+language:
+}
