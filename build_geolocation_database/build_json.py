@@ -24,12 +24,16 @@ country = country[['city', 'admin', 'asciiname', 'alternatenames', 'country']]
 admin = alladmin[alladmin['feature_code'].isin(['ADM1', 'ADM2'])]
 admin['admin'] = admin['name']
 admin['city'] = ''
-admin = admin[['city', 'admin', 'asciiname', 'alternatenames', 'country']]
+admin = admin[['city', 'admin', 'asciiname', 'alternatenames', 'country', 'feature_code']]
 admin = admin[pd.notnull(admin.country)]
 admin = admin.sort_values('country')
 
+admin1 = admin[admin['feature_code'].isin(['ADM1'])]
 
-dat = pd.concat([admin, cities, country])
+admin2 = admin[admin['feature_code'].isin(['ADM2'])]
+
+
+dat = pd.concat([admin2, cities, admin1, country])
 
 #make aliases
 dat['comma'] = ','
