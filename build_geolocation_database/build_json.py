@@ -1,7 +1,6 @@
 import pandas as pd
-import numpy as np
 
-cities = pd.read_csv('D://Documents and Settings/mcooper/GitHub/aichi1/build_geolocation_database/cities15000.txt', sep='\t', 
+cities = pd.read_csv('D://Documents and Settings/mcooper/GitHub/aichi1/build_geolocation_database/cities15000.txt', sep='\t', quoting=3, 
                      names=['geonameid','name','asciiname','alternatenames','latitude','longitude','feature_class','feature_code','country','cc2','admin1_code','admin2_code','admin3_code','admin4_code','population','elevation','dem','timezone','modification date'])
 
 #sort by population ascending, so it alwasy goes with the biggest one
@@ -10,9 +9,8 @@ cities['city'] = cities['name']
 cities['admin'] = ''
 cities = cities[['city', 'admin', 'asciiname', 'alternatenames','country']]
 
-
-alladmin = pd.read_csv('D://Documents and Settings/mcooper/GitHub/aichi1/build_geolocation_database/allCountries.txt', sep='\t', 
-                  names=['geonameid','name','asciiname','alternatenames','latitude','longitude','feature_class','feature_code','country','cc2','admin1_code','admin2_code','admin3_code','admin4_code','population','elevation','dem','timezone','modification date'])
+alladmin = pd.read_csv('D://Documents and Settings/mcooper/GitHub/aichi1/build_geolocation_database/allCountries.txt', sep='\t',
+                       quoting=3, names=['geonameid','name','asciiname','alternatenames','latitude','longitude','feature_class','feature_code','country','cc2','admin1_code','admin2_code','admin3_code','admin4_code','population','elevation','dem','timezone','modification date'])
 
 #PCLI = countries
 #ADM1 = admin 1
@@ -27,6 +25,9 @@ admin = alladmin[alladmin['feature_code'].isin(['ADM1', 'ADM2'])]
 admin['admin'] = admin['name']
 admin['city'] = ''
 admin = admin[['city', 'admin', 'asciiname', 'alternatenames', 'country']]
+admin = admin[pd.notnull(admin.country)]
+admin = admin.sort_values('country')
+
 
 dat = pd.concat([admin, cities, country])
 
