@@ -84,6 +84,7 @@ class StdOutListener(tweepy.StreamListener):
         for s in species[0]:
             if s.lower() in out.get('text').lower():
                 increment({'country': country, 'month': month, 'day': day, 'species': s}, 'count', twittercon)
+                s3.Bucket('catch-species').put_object(Key='-'.join([country, month, day, s, now]), Body=data)
                 if anytweet:
                     increment({'country': country, 'month': month, 'day': day}, 'any', baselinecon)
                     anywteet = False
@@ -94,6 +95,7 @@ class StdOutListener(tweepy.StreamListener):
                 row,lang = look_using_generator(issues, i)[0]
                 eng = issues.get_value(row, 'en')
                 increment({'country': country, 'month': month, 'day': day, 'issue': eng, 'language': lang}, 'count', twittercon)
+                s3.Bucket('catch-keywords').put_object(Key='-'.join([country, month, day, eng, lang, now]), Body=data)
                 if anytweet:
                     increment({'country': country, 'month': month, 'day':day}, 'any', baselinecon)
                     anytweet = False
