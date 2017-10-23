@@ -51,8 +51,6 @@ def look_using_generator(df, value):
 #Read in files
 ###############################
 
-os.chdir('~/aichi1/collect-webhose')
-
 issues = pd.read_csv('../collect-twitter/issues.csv', encoding='utf-8')
 issues_melt = pd.melt(issues.drop('google_topic_id', axis=1))
 species = pd.read_csv('../collect-twitter/species_list.csv', header=None, encoding='utf-8')
@@ -122,7 +120,7 @@ for wl in wordlists:
 #Get baseline rates for every observed country
 ###############################################
 print('Checking all countries for baseline')
-countries = pd.read_csv('../countries.csv')
+countries = pd.read_csv('../countries.csv', na_filter=False)
 for country in countries['alpha-2']:
     q = "thread.country:" + country + ' published:>' + start + ' published:<' + stop + ' site_type:news'
     query_params = {"q": q, "ts":start}
