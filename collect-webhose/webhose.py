@@ -12,6 +12,8 @@ import webhoseio
 import time
 from datetime import datetime, timedelta
 
+os.chdir('/home/ec2-user/aichi1/collect-webhose')
+
 print('Establish connections')
 client = MongoClient('localhost', 27017)
 detailcon = client.TWITTER['WEBHOSE-DETAIL']
@@ -76,7 +78,7 @@ stop = str(int(time.mktime(datetime.strptime(yesterday, "%Y%m%d").timetuple()) *
 #Build word list chunks
 #####################################
 
-wordlists = list(chunks(list(issues_melt['value'].append(species[0])), 15))
+wordlists = list(chunks(list(issues_melt['value'].append(species[0])), 40))
     
 ################################################
 #Urls get messy.  Lets try it with their package
@@ -84,6 +86,7 @@ wordlists = list(chunks(list(issues_melt['value'].append(species[0])), 15))
 
 webhoseio.config(token="1abb8030-bf0f-4ce3-80a4-d2093d1a2763")
 
+countries = []
 uuids = []
 for wl in wordlists:
     print('searching for ' + ' '.join(wl))
@@ -93,13 +96,18 @@ for wl in wordlists:
     query_params = {"q": q, "ts":start}
 
     output = webhoseio.query("filterWebContent", query_params)
-    
+
+    if wordlists.index(wl) == 0:
+        beginRequests = output['requestsLeft']
+        print('Began with ' + str(beginRequests + 1) + ' requests available')    
+
     #todo any handling
     while len(output['posts']) > 0:
         for i in output['posts']:
             if i['uuid'] not in uuids:
                 anytweet = True
                 country = i['thread']['country']
+                countries.append(country)
                 for w in issues_melt['value']:
                     if w.lower() in i['text'].lower():
                         row,lang = look_using_generator(issues, w)[0]
@@ -116,12 +124,13 @@ for wl in wordlists:
                 
         output = webhoseio.get_next()
 
+print('Ended keyword search with ' + str(output['requestsLeft']) + ' available')
+
 #############################################
 #Get baseline rates for every observed country
 ###############################################
 print('Checking all countries for baseline')
-countries = pd.read_csv('../countries.csv', na_filter=False)
-for country in countries['alpha-2']:
+for country in set(countries):
     q = "thread.country:" + country + ' published:>' + start + ' published:<' + stop + ' site_type:news'
     query_params = {"q": q, "ts":start}
     output = webhoseio.query("filterWebContent", query_params)
@@ -137,3 +146,6 @@ for country in countries['alpha-2']:
     else:
         post['baseline'] = size
         baselinecon.save(post)
+
+print('Country search ended with ' + str(output['requestsLeft']) + ' available')
+print('The processed ended up using ' + str(beingRequests + output['requestsLeft']) + ' total requests')
