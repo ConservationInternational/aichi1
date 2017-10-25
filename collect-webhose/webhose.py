@@ -78,7 +78,7 @@ stop = str(int(time.mktime(datetime.strptime(yesterday, "%Y%m%d").timetuple()) *
 #Build word list chunks
 #####################################
 
-wordlists = list(chunks(list(issues_melt['value'].append(species[0])), 50))
+wordlists = list(chunks(list(issues_melt['value'].append(species[0])), 40))
     
 ################################################
 #Urls get messy.  Lets try it with their package
@@ -88,9 +88,9 @@ webhoseio.config(token="1abb8030-bf0f-4ce3-80a4-d2093d1a2763")
 
 countries = []
 uuids = []
-for wl in wordlists:
-    print('searching for ' + ' '.join(wl))
-    
+for wl in wordlists[6:]:
+    print('searching for ' + ' '.join(wl) + '\n')
+
     q = '("' + '" OR "'.join(wl) + '") published:>' + start + ' published:<' + stop + ' site_type:news'
 
     query_params = {"q": q, "ts":start}
@@ -99,7 +99,7 @@ for wl in wordlists:
 
     if wordlists.index(wl) == 0:
         beginRequests = output['requestsLeft']
-        print('Began with ' + str(beginRequests + 1) + ' requests available')    
+        print('----------------------------\nBegan with ' + str(beginRequests + 1) + ' requests available\n')    
 
     #todo any handling
     while len(output['posts']) > 0:
@@ -121,15 +121,15 @@ for wl in wordlists:
                         if anytweet:
                             increment({'country': country, 'month': month, 'day': day}, 'any', baselinecon)
             uuids.append(i['uuid'])
-                
+
         output = webhoseio.get_next()
 
-print('Ended keyword search with ' + str(output['requestsLeft']) + ' available')
+print('Ended keyword search with ' + str(output['requestsLeft']) + ' available\n------------------------------')
 
 #############################################
 #Get baseline rates for every observed country
 ###############################################
-print('Checking all countries for baseline')
+print('Checking all countries for baseline\n\n')
 for country in set(countries):
     q = "thread.country:" + country + ' published:>' + start + ' published:<' + stop + ' site_type:news'
     query_params = {"q": q, "ts":start}
@@ -147,5 +147,5 @@ for country in set(countries):
         post['baseline'] = size
         baselinecon.save(post)
 
-print('Country search ended with ' + str(output['requestsLeft']) + ' available')
+print('Country search ended with ' + str(output['requestsLeft']) + ' available\n\n')
 print('The processed ended up using ' + str(beingRequests + output['requestsLeft']) + ' total requests')
