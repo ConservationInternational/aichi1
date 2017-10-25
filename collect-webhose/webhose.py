@@ -78,7 +78,7 @@ stop = str(int(time.mktime(datetime.strptime(yesterday, "%Y%m%d").timetuple()) *
 #Build word list chunks
 #####################################
 
-wordlists = list(chunks(list(issues_melt['value'].append(species[0])), 40))
+wordlists = list(chunks(list(issues_melt['value'].append(species[0])), 50))
     
 ################################################
 #Urls get messy.  Lets try it with their package
