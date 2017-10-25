@@ -89,17 +89,12 @@ countries = []
 uuids = []
 for wl in wordlists[6:]:
     print('searching for ' + ' '.join(wl) + '\n')
-
     q = '("' + '" OR "'.join(wl) + '") published:>' + start + ' published:<' + stop + ' site_type:news'
-
     query_params = {"q": q, "ts":start}
-
     output = webhoseio.query("filterWebContent", query_params)
-
     if wordlists.index(wl) == 0:
         beginRequests = output['requestsLeft']
         print('----------------------------\nBegan with ' + str(beginRequests + 1) + ' requests available\n')    
-
     #todo any handling
     while len(output['posts']) > 0:
         for i in output['posts']:
@@ -116,24 +111,28 @@ for wl in wordlists[6:]:
                             increment({'country': country, 'month': month, 'day': day}, 'any', baselinecon)
                             anytweet = False
             uuids.append(i['uuid'])
-
         output = webhoseio.get_next()
 
 print('Ended keyword search with ' + str(output['requestsLeft']) + ' available\n------------------------------')
-print(countries)
 
 #############################################
 #Get baseline rates for every observed country
 ###############################################
+
+countries = set(countries)
+countries.discard('')
+
+print(countries)
+
 print('Checking all countries for baseline\n\n')
-for country in set(countries):
+for country in countries:
     q = "thread.country:" + country + ' published:>' + start + ' published:<' + stop + ' site_type:news'
     print(q + '\n')
     query_params = {"q": q, "ts":start}
     output = webhoseio.query("filterWebContent", query_params)
-
+    
     size = output['totalResults']
-
+    
     incDict = {'country': country, 'month': month, 'day': day}
     post = baselinecon.find_one(incDict)
     if post is None:
