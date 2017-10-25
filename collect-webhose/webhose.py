@@ -55,7 +55,6 @@ def look_using_generator(df, value):
 
 issues = pd.read_csv('../collect-twitter/issues.csv', encoding='utf-8')
 issues_melt = pd.melt(issues.drop('google_topic_id', axis=1))
-species = pd.read_csv('../collect-twitter/species_list.csv', header=None, encoding='utf-8')
 
 ########################
 #Get times
@@ -78,7 +77,7 @@ stop = str(int(time.mktime(datetime.strptime(yesterday, "%Y%m%d").timetuple()) *
 #Build word list chunks
 #####################################
 
-wordlists = list(chunks(list(issues_melt['value'].append(species[0])), 40))
+wordlists = list(chunks(list(issues_melt['value']), 40))
     
 ################################################
 #Urls get messy.  Lets try it with their package
@@ -115,16 +114,13 @@ for wl in wordlists[6:]:
                         increment({'country': country, 'month': month, 'day': day, 'issue': eng, 'language': lang}, 'count', detailcon)
                         if anytweet:
                             increment({'country': country, 'month': month, 'day': day}, 'any', baselinecon)
-                for s in species[0]:
-                    if w in i['text']:
-                        increment({'country': country, 'month': month, 'day': day, 'species': s}, 'count', detailcon)
-                        if anytweet:
-                            increment({'country': country, 'month': month, 'day': day}, 'any', baselinecon)
+                            anytweet = False
             uuids.append(i['uuid'])
 
         output = webhoseio.get_next()
 
 print('Ended keyword search with ' + str(output['requestsLeft']) + ' available\n------------------------------')
+print(countries)
 
 #############################################
 #Get baseline rates for every observed country
@@ -132,11 +128,12 @@ print('Ended keyword search with ' + str(output['requestsLeft']) + ' available\n
 print('Checking all countries for baseline\n\n')
 for country in set(countries):
     q = "thread.country:" + country + ' published:>' + start + ' published:<' + stop + ' site_type:news'
+    print(q + '\n')
     query_params = {"q": q, "ts":start}
     output = webhoseio.query("filterWebContent", query_params)
-    
+
     size = output['totalResults']
-    
+
     incDict = {'country': country, 'month': month, 'day': day}
     post = baselinecon.find_one(incDict)
     if post is None:
@@ -148,4 +145,4 @@ for country in set(countries):
         baselinecon.save(post)
 
 print('Country search ended with ' + str(output['requestsLeft']) + ' available\n\n')
-print('The processed ended up using ' + str(beingRequests + output['requestsLeft']) + ' total requests')
+print('The processed ended up using ' + str(beginRequests + output['requestsLeft']) + ' total requests')
