@@ -121,6 +121,7 @@ print('Ended keyword search with ' + str(output['requestsLeft']) + ' available\n
 
 countries = set(countries)
 countries.discard('')
+countries.discard(None)
 
 print(countries)
 
