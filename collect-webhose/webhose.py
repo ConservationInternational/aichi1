@@ -87,7 +87,7 @@ webhoseio.config(token="1abb8030-bf0f-4ce3-80a4-d2093d1a2763")
 
 countries = []
 uuids = []
-for wl in wordlists[6:]:
+for wl in wordlists:
     print('searching for ' + ' '.join(wl) + '\n')
     q = '("' + '" OR "'.join(wl) + '") published:>' + start + ' published:<' + stop + ' site_type:news'
     query_params = {"q": q, "ts":start}
@@ -145,4 +145,4 @@ for country in countries:
         baselinecon.save(post)
 
 print('Country search ended with ' + str(output['requestsLeft']) + ' available\n\n')
-print('The processed ended up using ' + str(beginRequests + output['requestsLeft']) + ' total requests')
+print('The processed ended up using ' + str(beginRequests - output['requestsLeft']) + ' total requests')
