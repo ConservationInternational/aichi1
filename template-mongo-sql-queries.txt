@@ -1,0 +1,14 @@
+SELECT * FROM WEBHOSE-BASELINE WHERE day = '2017-10-20'
+db.getCollection('WEBHOSE-BASELINE').find({day : '2017-10-30'})
+
+
+SELECT * FROM WEBHOSE-BASELINE WHERE language <> 'en'
+db.getCollection('TWITTER-DETAIL').find({language: {$ne : 'en'}})
+
+SELECT issue, sum(count) FROM TWITTER-DETAIL GROUP BY issue
+db.getCollection('TWITTER-DETAIL').aggregate([{$group : { _id: "$issue", total: {$sum: "$count"}}}])
+
+SELECT issue, language, sum(count) FROM TWITTER-DETAIL GROUP BY issue, language ORDER BY sum(count) 
+db.getCollection('TWITTER-DETAIL').aggregate([{$group : {_id: {issue : '$issue', language: "$language"}, "count" : {$sum: '$count'}}}, {$sort: {count: -1}}])
+
+
