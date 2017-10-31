@@ -55,6 +55,8 @@ def look_using_generator(df, value):
 
 issues = pd.read_csv('../collect-twitter/issues.csv', encoding='utf-8')
 issues_melt = pd.melt(issues.drop('google_topic_id', axis=1))
+issues_melt = issues_melt.loc[issues_melt['value'] != 'XyEf9fAl2IuV6u97aM7a']
+
 
 ########################
 #Get times

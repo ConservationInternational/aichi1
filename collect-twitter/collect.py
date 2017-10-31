@@ -21,6 +21,7 @@ resolver.load_locations()
 
 issues = pd.read_csv('issues.csv', encoding='utf-8')
 issues_melt = pd.melt(issues.drop('google_topic_id', axis=1))
+issues_met = issues_melt.loc[issues_melt['value'] != 'XyEf9fAl2IuV6u97aM7a']
 species = pd.read_csv('species_list.csv', header=None, encoding='utf-8')
 
 s3 = boto3.resource('s3')
@@ -87,7 +88,7 @@ class StdOutListener(tweepy.StreamListener):
                 s3.Bucket('catch-species').put_object(Key='-'.join([country, month, day, s, now]), Body=json.dumps(out, ensure_ascii=False))
                 if anytweet:
                     increment({'country': country, 'month': month, 'day': day}, 'any', baselinecon)
-                    anywteet = False
+                    anytweet = False
 
         #Check issues
         for i in issues_melt['value']:
