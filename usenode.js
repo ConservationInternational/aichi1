@@ -17,13 +17,17 @@ Array.prototype.sortOn = function(key){
 http.createServer(function (req, res) {
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
-		db.collection("country-language").find({}).toArray(function(err, result) {
-			if (err) throw err;
-			res.write(result.sort(function(a, b){
-						    if(a.country < b.country) return -1;
-						    if(a.country > b.country) return 1;
-						    return 0;
-						}).map(i => i.country + '-' + i.lang + ' ' + i.count).join('\n'));
+		var twitter = db.getCollection('TWITTER-BASELINE').aggregate([ 
+{$project : {"country": "$country",
+             "day": "$day",     
+             "twitter-rate" : {$divide: ['$any', '$baseline']}
+             }}]);
+		var news = db.getCollection('WEBHOSE-BASELINE').aggregate([
+{$match : {baseline: {$ne: 0}}},
+{$project : {"country": "$country",
+             "day": "$day",     
+             "webhose-rate" : {$divide: ['$any', '$baseline']}
+             }}]);
 			res.end();
 			db.close();
 		});
