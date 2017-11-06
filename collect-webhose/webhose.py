@@ -90,7 +90,6 @@ webhoseio.config(token="1abb8030-bf0f-4ce3-80a4-d2093d1a2763")
 countries = []
 uuids = []
 for wl in wordlists:
-    print('searching for ' + ' '.join(wl) + '\n')
     q = '("' + '" OR "'.join(wl) + '") published:>' + start + ' published:<' + stop + ' site_type:news'
     query_params = {"q": q, "ts":start}
     output = webhoseio.query("filterWebContent", query_params)
@@ -103,15 +102,16 @@ for wl in wordlists:
             if i['uuid'] not in uuids:
                 anytweet = True
                 country = i['thread']['country']
-                countries.append(country)
-                for w in issues_melt['value']:
-                    if w.lower() in i['text'].lower():
-                        row,lang = look_using_generator(issues, w)[0]
-                        eng = issues.get_value(row, 'en')
-                        increment({'country': country, 'month': month, 'day': day, 'issue': eng, 'language': lang}, 'count', detailcon)
-                        if anytweet:
-                            increment({'country': country, 'month': month, 'day': day}, 'any', baselinecon)
-                            anytweet = False
+                if country != '' and country is not None:
+                    countries.append(country)
+                    for w in issues_melt['value']:
+                        if w.lower() in i['text'].lower():
+                            row,lang = look_using_generator(issues, w)[0]
+                            eng = issues.get_value(row, 'en')
+                            increment({'country': country, 'month': month, 'day': day, 'issue': eng, 'language': lang}, 'count', detailcon)
+                            if anytweet:
+                                increment({'country': country, 'month': month, 'day': day}, 'any', baselinecon)
+                                anytweet = False
             uuids.append(i['uuid'])
         output = webhoseio.get_next()
 
@@ -121,16 +121,13 @@ print('Ended keyword search with ' + str(output['requestsLeft']) + ' available\n
 #Get baseline rates for every observed country
 ###############################################
 
-countries = set(countries)
-countries.discard('')
-countries.discard(None)
+countries = pd.read_csv('../countries.csv')
 
-print(countries)
+countries = countries['alpha-2']
 
 print('Checking all countries for baseline\n\n')
 for country in countries:
     q = "thread.country:" + country + ' published:>' + start + ' published:<' + stop + ' site_type:news'
-    print(q + '\n')
     query_params = {"q": q, "ts":start}
     output = webhoseio.query("filterWebContent", query_params)
     
