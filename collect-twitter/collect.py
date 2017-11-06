@@ -38,7 +38,9 @@ def increment(incDict, incStr, db):
     """
     post = db.find_one(incDict)
     if post is None:
-        incDict[incStr] = 1      
+        incDict[incStr] = 1
+        if incStr == 'baseline':
+            incDict['any'] = 0
         db.insert(incDict)
     elif incStr in post:
         post[incStr] = post[incStr] + 1
