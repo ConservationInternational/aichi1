@@ -12,3 +12,25 @@ db.getCollection('TWITTER-DETAIL').aggregate([{$group : {_id: {issue : '$issue',
 
 SELECT issue, language, sum(count) FROM TWITTER-DETAIL GROUP BY issue, language WHERE language <> 'en' ORDER BY sum(count) 
 db.getCollection('WEBHOSE-DETAIL').aggregate([{$match : {language : {$ne : 'en'}}}, {$group : {_id: {issue : '$issue', language: "$language"}, "count" : {$sum: '$count'}}}, {$sort: {count: -1}}])
+
+
+UPDATE TWITTER-BASELINE 
+SET any = 0
+WHERE NOT EXISTS any
+db.getCollection('TWITTER-BASELINE_copy').updateMany({'any': {$exists: false}}, {$set : {"any" : 0}})
+
+SELECT country, dat, any/baseline FROM TWITTER-BASELINE
+db.getCollection('TWITTER-BASELINE').aggregate([ 
+{$project : {"country": "$country",
+             "day": "$day",     
+             "twitter-rate" : {$divide: ['$any', '$baseline']}
+             }}])
+
+SELECT country, dat, any/baseline
+FROM WEBHOSE-BASELINE
+db.getCollection('WEBHOSE-BASELINE').aggregate([
+{$match : {baseline: {$ne: 0}}},
+{$project : {"country": "$country",
+             "day": "$day",
+             "webhose-rate" : {$divide: ['$any', '$baseline']}
+             }}])
