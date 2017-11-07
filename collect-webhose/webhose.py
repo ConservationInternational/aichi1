@@ -87,7 +87,6 @@ wordlists = list(chunks(list(issues_melt['value']), 40))
 
 webhoseio.config(token="1abb8030-bf0f-4ce3-80a4-d2093d1a2763")
 
-countries = []
 uuids = []
 for wl in wordlists:
     q = '("' + '" OR "'.join(wl) + '") published:>' + start + ' published:<' + stop + ' site_type:news'
@@ -121,7 +120,7 @@ print('Ended keyword search with ' + str(output['requestsLeft']) + ' available\n
 #Get baseline rates for every observed country
 ###############################################
 
-countries = pd.read_csv('../countries.csv')
+countries = pd.read_csv('../countries.csv', na_filter=False)
 
 countries = countries['alpha-2']
 
