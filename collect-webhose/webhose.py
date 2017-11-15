@@ -87,6 +87,9 @@ wordlists = list(chunks(list(issues_melt['value']), 40))
 
 webhoseio.config(token="1abb8030-bf0f-4ce3-80a4-d2093d1a2763")
 
+countries = pd.read_csv('../countries.csv', na_filter=False)
+countries = countries['alpha-2'].tolist()
+
 uuids = []
 for wl in wordlists:
     q = '("' + '" OR "'.join(wl) + '") published:>' + start + ' published:<' + stop + ' site_type:news'
@@ -101,8 +104,9 @@ for wl in wordlists:
             if i['uuid'] not in uuids:
                 anytweet = True
                 country = i['thread']['country']
-                if country != '' and country is not None:
-                    countries.append(country)
+                if country == 'KS':
+                    country = 'KR'
+                if country in countries['alpha-2']:
                     for w in issues_melt['value']:
                         if w.lower() in i['text'].lower():
                             row,lang = look_using_generator(issues, w)[0]
@@ -120,10 +124,6 @@ print('Ended keyword search with ' + str(output['requestsLeft']) + ' available\n
 #Get baseline rates for every observed country
 ###############################################
 
-countries = pd.read_csv('../countries.csv', na_filter=False)
-
-countries = countries['alpha-2']
-
 print('Checking all countries for baseline\n\n')
 for country in countries:
     q = "thread.country:" + country + ' published:>' + start + ' published:<' + stop + ' site_type:news'
@@ -132,15 +132,16 @@ for country in countries:
     
     size = output['totalResults']
     
-    incDict = {'country': country, 'month': month, 'day': day}
-    post = baselinecon.find_one(incDict)
-    if post is None:
-        incDict['any'] = 0
-        incDict['baseline'] = size
-        baselinecon.insert(incDict)
-    else:
-        post['baseline'] = size
-        baselinecon.save(post)
+    if size > 0:
+        incDict = {'country': country, 'month': month, 'day': day}
+        post = baselinecon.find_one(incDict)
+        if post is None:
+            incDict['any'] = 0
+            incDict['baseline'] = size
+            baselinecon.insert(incDict)
+        else:
+            post['baseline'] = size
+            baselinecon.save(post)
 
 print('Country search ended with ' + str(output['requestsLeft']) + ' available\n\n')
 print('The processed ended up using ' + str(beginRequests - output['requestsLeft']) + ' total requests')
