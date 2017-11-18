@@ -106,7 +106,7 @@ for wl in wordlists:
                 country = i['thread']['country']
                 if country == 'KS':
                     country = 'KR'
-                if country in countries['alpha-2']:
+                if country in countries:
                     for w in issues_melt['value']:
                         if w.lower() in i['text'].lower():
                             row,lang = look_using_generator(issues, w)[0]
