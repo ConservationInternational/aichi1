@@ -2,7 +2,10 @@
 .logo {
 	position: absolute;
 	top: 25px;
-	left: 25px;
+}
+
+.banner {
+	position: absolute;
 }
 
 * {
