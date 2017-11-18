@@ -1,3 +1,7 @@
-d3.csv("http://34.195.2.46:8080/", function(data) {
+d3.csv("twitter.csv", function(data) {
+  console.log(data[0]);
+});
+
+d3.csv("news.csv", function(data) {
   console.log(data[0]);
 });
