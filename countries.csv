@@ -1,6 +1,6 @@
 name,alpha-2
 Afghanistan,AF
-Åland Islands,AX
+Ã…land Islands,AX
 Albania,AL
 Algeria,DZ
 American Samoa,AS
@@ -25,12 +25,12 @@ Benin,BJ
 Bermuda,BM
 Bhutan,BT
 Bolivia,BO
-Carribean Netherlands,BQ
 Bosnia & Herzegovina,BA
 Botswana,BW
 Bouvet Island,BV
 Brazil,BR
 British Indian Ocean Territory,IO
+British Virgin Islands,VG
 Brunei,BN
 Bulgaria,BG
 Burkina Faso,BF
@@ -39,6 +39,7 @@ Cambodia,KH
 Cameroon,CM
 Canada,CA
 Cape Verde,CV
+Caribbean Netherlands,BQ
 Cayman Islands,KY
 Central African Republic,CF
 Chad,TD
@@ -52,10 +53,10 @@ Congo - Brazzaville,CG
 Congo - Kinshasa,CD
 Cook Islands,CK
 Costa Rica,CR
-Côte d'Ivoire,CI
+CÃ´te d'Ivoire,CI
 Croatia,HR
 Cuba,CU
-Curaçao,CW
+CuraÃ§ao,CW
 Cyprus,CY
 Czechia,CZ
 Denmark,DK
@@ -95,7 +96,6 @@ Guinea-Bissau,GW
 Guyana,GY
 Haiti,HT
 Heard Island & McDonald Islands,HM
-Vatican City,VA
 Honduras,HN
 Hong Kong,HK
 Hungary,HU
@@ -115,8 +115,7 @@ Jordan,JO
 Kazakhstan,KZ
 Kenya,KE
 Kiribati,KI
-North Korea,KP
-South Korea,KR
+Kosovo,XK
 Kuwait,KW
 Kyrgyzstan,KG
 Laos,LA
@@ -162,6 +161,7 @@ Niger,NE
 Nigeria,NG
 Niue,NU
 Norfolk Island,NF
+North Korea,KP
 Northern Mariana Islands,MP
 Norway,NO
 Oman,OM
@@ -178,20 +178,13 @@ Poland,PL
 Portugal,PT
 Puerto Rico,PR
 Qatar,QA
-Réunion,RE
+RÃ©union,RE
 Romania,RO
 Russia,RU
 Rwanda,RW
-St. Barthélemy,BL
-"St. Helena, Ascension & Tristan da Cunha",SH
-St. Kitts & Nevis,KN
-St. Lucia,LC
-St. Martin,MF
-St. Pierre & Miquelon,PM
-St. Vincent & Grenadines,VC
 Samoa,WS
 San Marino,SM
-São Tomé & Príncipe,ST
+SÃ£o TomÃ© & PrÃ­ncipe,ST
 Saudi Arabia,SA
 Senegal,SN
 Serbia,RS
@@ -205,9 +198,17 @@ Solomon Islands,SB
 Somalia,SO
 South Africa,ZA
 South Georgia & South Sandwich Islands,GS
+South Korea,KR
 South Sudan,SS
 Spain,ES
 Sri Lanka,LK
+St. BarthÃ©lemy,BL
+"St. Helena, Ascension & Tristan da Cunha",SH
+St. Kitts & Nevis,KN
+St. Lucia,LC
+St. Martin,MF
+St. Pierre & Miquelon,PM
+St. Vincent & Grenadines,VC
 Sudan,SD
 Suriname,SR
 Svalbard & Jan Mayen,SJ
@@ -229,6 +230,7 @@ Turkey,TR
 Turkmenistan,TM
 Turks & Caicos Islands,TC
 Tuvalu,TV
+U.S. Virgin Islands,VI
 Uganda,UG
 Ukraine,UA
 United Arab Emirates,AE
@@ -238,13 +240,11 @@ United States Minor Outlying Islands,UM
 Uruguay,UY
 Uzbekistan,UZ
 Vanuatu,VU
+Vatican City,VA
 Venezuela,VE
 Vietnam,VN
-British Virgin Islands,VG
-U.S. Virgin Islands,VI
 Wallis & Futuna,WF
 Western Sahara,EH
 Yemen,YE
 Zambia,ZM
 Zimbabwe,ZW
-Kosovo,XK
