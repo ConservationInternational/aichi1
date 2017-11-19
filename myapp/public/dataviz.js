@@ -21,4 +21,16 @@ d3.csv("news.csv", function(d) {
   news = data;
 });
 
-console.log(twitter)
+//Test barchart
+
+var width = 500;
+var height = 400;
+
+var svg = d3.select('.barchart')
+  .append('svg')
+  .attr('width', width)
+  .attr('height', height);
+
+var max_twitter = d3.max(twitter, function(d) {
+  return d.twitter;
+});
