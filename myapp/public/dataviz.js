@@ -10,6 +10,16 @@ var data = d3.select('#data').html().trim();
     };
   });
 
+var data = data.filter(function(d){
+  return d.overall != 0;
+});
+
+var data = data.sort(function(a, b){
+  if(a.overall > b.overall) return -1;
+  if(a.overall < b.overall) return 1;
+  return 0;
+});
+
 var countries = data.map(function(d){
   return d.fullname;
 });
@@ -17,7 +27,7 @@ var countries = data.map(function(d){
 var width = 1000;
 var height = 15*countries.length;
 
-var svg = d3.select('body')
+var svg = d3.select('#barchart')
   .append('svg')
   .attr('width', width)
   .attr('height', height);
@@ -26,7 +36,7 @@ var margins = {
   top: 25,
   right: 20,
   bottom: 0,
-  left: 250
+  left: 300
 };
 
 var graphWidth = width - margins.right - margins.left;
@@ -41,7 +51,7 @@ var x = d3.scale.linear()
 
 var y = d3.scale.ordinal()
   .domain(countries)
-  .rangeRoundBands([0, graphHeight], 0.1);
+  .rangeBands([0, graphHeight], 0.1, 0.1);
 
 var xAxis = d3.svg.axis()
   .scale(x)

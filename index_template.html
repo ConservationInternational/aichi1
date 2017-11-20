@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<title>Real-Time Biodiversity Engagement Monitor</title>
+	<title>Global Biodiversity Engagement Monitor</title>
 	<script src="https://d3js.org/d3.v3.min.js"></script>
 <head>
 	<div>
@@ -20,11 +20,20 @@
 <body>
 
 	<div>
-	<h1>Real-Time Biodiversity Engagement Monitor</h1>
+	<h1>Global Biodiversity Engagement Monitor</h1>
 
-	<p>Test test test doop dap deep!</p>
+	<p>Below are biodiversity engagement scores using data from Twitter, Google Trends and various internet newspapapers.  Data below is shown for the month of November 2017.</p>
 	</div>
+	<select id='variable'>
+		<option value="trends" selected="selected">Google Trends</option>
+		<option value="twitter">Twitter</option>
+		<option value="news">Internet Newspapers</option>
+		<option value="overall">Overall Indicator</option>
+	</select>
 	<div id="barchart">
+	</div>
+	<div>
+	<p>Click here to download a factsheet for this indicator</p>
 	</div>
 <script type="text/csv" id="data">
 ~~~Insert data here~~~
