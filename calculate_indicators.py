@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 from pymongo import MongoClient
 
+countries = pd.read_csv('countries.csv')
+countries.columns = ['fullname', 'country']
+
 #Connect to MongoDB
 client = MongoClient('localhost', 27017)
 trendscon = client.TWITTER['TRENDS']
@@ -36,7 +39,7 @@ for doc in cursor:
 
 #Any 0 means never any data, lets remove that
 trends = pd.DataFrame(trends)
-trends.trends[trends.trends==0] = np.NaN
+trends.loc[trends.trends==0, 'trends'] = np.NaN
 
 def rescaledf(df, bycol, rescalecol):
     '''Rescale according to the max in rescalecol,
@@ -63,4 +66,25 @@ comb[comb==0] = np.NaN
 
 comb['overall'] = comb[['trends', 'twitter', 'news']].mean(axis=1)
 
+comb = pd.merge(comb, countries, how='inner', on=['country'])
+
+#Temporary!! Subset to just November for easier visualization for now.
+comb = comb[comb.month=='2017-11']
+
 comb.to_csv('indicator.csv', index=False)
+
+f = open('index_template.html', 'r')
+html = f.read()
+f.close()
+
+html = html.replace("~~~Insert data here~~~", comb.to_csv(index=False))
+
+f = open('myapp/public/index.html', 'w')
+f.write(html)
+f.close()
+
+
+
+
+
+

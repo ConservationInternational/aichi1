@@ -1,32 +1,3 @@
-<!DOCTYPE HTML>
-<html>
-	<link rel="stylesheet" type="text/css" href="style.css">
-	<title>Real-Time Biodiversity Engagement Monitor</title>
-	<script src="https://d3js.org/d3.v3.min.js"></script>
-<head>
-	<div>
-		<svg width="100%" height="150" class="banner">
-		  <rect width="100%" height="150" style="fill:rgb(1,147,215)" />
-		</svg>
-		<svg width="100%" height="125" class="banner">
-		  <rect width="100%" height="125" style="fill:rgb(76,169,80)" />
-		</svg>
-		<svg width="250" height="100" class="logo">
-		  <rect width="250" height="100" style="fill:rgb(255,255,255)" />
-		</svg>
-		<img src="img/logo.png" height="100" width="250" class="logo"/>
-	</div>
-</head>
-<body>
-
-	<div>
-	<h1>Real-Time Biodiversity Engagement Monitor</h1>
-
-	<p>Test test test doop dap deep!</p>
-	</div>
-	<div id="barchart">
-	</div>
-<script type="text/csv" id="data">
 country,month,trends,twitter,news,overall,fullname
 YE,2017-11,,1.03662356895,1.70222806485,1.3694258169,Yemen
 VA,2017-11,,5.25252525253,20.3313404594,12.7919328559,Vatican City
@@ -276,9 +247,3 @@ SV,2017-11,12.7272727273,1.3871845489,10.0787226965,8.06439332423,El Salvador
 DE,2017-11,4.63636363636,2.17028380634,5.48620244264,4.09761662845,Germany
 LR,2017-11,,3.7518037518,,3.7518037518,Liberia
 CK,2017-11,,,,,Cook Islands
-
-</script>
-<script src="dataviz.js"></script>
-</body>
-</html>
-

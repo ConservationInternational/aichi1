@@ -3,6 +3,9 @@ from pytrends.request import TrendReq
 import datetime
 import time
 from pymongo import MongoClient
+import os
+
+os.chdir('/home/ec2-user/aichi1/collect-trends/')
 
 data = pd.read_csv("../collect-twitter/issues.csv", encoding='utf-8')
 kw_list = data['google_topic_id'].tolist()
