@@ -1,13 +1,12 @@
 var select;
 var selection;
 
-d3.select("#variable")
-  .on("change", function (){
+d3.select("#trendsbutton")
+  .on("click", function (){
     var data = d3.select('#data').html().trim();
 
-    var select = document.getElementById("variable");
-    var selection = select.options[select.selectedIndex].value;
-
+    var selection = 'trends'
+    
     data = d3.csv.parse(data, function (d) {
       return {
         fullname: d.fullname,
@@ -17,11 +16,64 @@ d3.select("#variable")
 
     d3.select('#barchart').html("");
 
-    updateGraph(data);
+    updateGraph(data, "#357D57");
 });
 
+d3.select("#twitterbutton")
+  .on("click", function (){
+    var data = d3.select('#data').html().trim();
 
-function updateGraph(data) {
+    var selection = 'twitter'
+    
+    data = d3.csv.parse(data, function (d) {
+      return {
+        fullname: d.fullname,
+        variable: +d[selection]
+      };
+    });
+
+    d3.select('#barchart').html("");
+
+    updateGraph(data, "#1A5EAB");
+});
+
+d3.select("#newsbutton")
+  .on("click", function (){
+    var data = d3.select('#data').html().trim();
+
+    var selection = 'news'
+    
+    data = d3.csv.parse(data, function (d) {
+      return {
+        fullname: d.fullname,
+        variable: +d[selection]
+      };
+    });
+
+    d3.select('#barchart').html("");
+
+    updateGraph(data, "#E6673E");
+});
+
+d3.select("#overallbutton")
+  .on("click", function (){
+    var data = d3.select('#data').html().trim();
+
+    var selection = 'overall'
+    
+    data = d3.csv.parse(data, function (d) {
+      return {
+        fullname: d.fullname,
+        variable: +d[selection]
+      };
+    });
+
+    d3.select('#barchart').html("");
+
+    updateGraph(data, "#5b5c61");
+});
+
+function updateGraph(data, color) {
   var data = data.filter(function(d){
     return d.variable != 0;
   });
@@ -45,7 +97,7 @@ function updateGraph(data) {
     .attr('height', height);
   
   var margins = {
-    top: 25,
+    top: 70,
     right: 20,
     bottom: 0,
     left: 300
@@ -87,7 +139,8 @@ function updateGraph(data) {
   bars.enter()
     .append('rect')
     .attr('class', 'bar')
-    .attr('width', 0);
+    .attr('width', 0)
+    .attr('fill', color);
   
   bars.exit()
     .remove();

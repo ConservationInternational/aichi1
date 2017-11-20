@@ -1,10 +1,53 @@
-
 .logo {
-	top: 25px;
+  top: 25px;
+  left: 25px;
+  position: absolute;
 }
 
 .banner {
+  top: 10px;
+  position:absolute;
 }
+
+#introtext{
+  margin-top: 200px;
+  margin-left: 100px;
+  margin-right: 100px;
+}
+
+#buttons{
+    margin: 0 auto;
+    width: 775px;
+}
+
+#barcart{
+  margin: 0 auto;
+}
+
+.button{
+  font-size: 20px;
+  padding: 14px 28px;
+  border-radius: 12px;
+  color: white;
+  border: none;
+}
+
+#trendsbutton{
+  background-color: #357D57
+}
+
+#twitterbutton{
+  background-color: #1A5EAB
+}
+
+#newsbutton{
+  background-color: #E6673E
+}
+
+#overallbutton{
+  background-color: #5b5c61
+}
+
 
 * {
  font-family: Helvetica;

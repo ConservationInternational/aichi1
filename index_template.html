@@ -1,15 +1,15 @@
 <!DOCTYPE HTML>
 <html>
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<title>Global Biodiversity Engagement Monitor</title>
+	<title>Global Biodiversity Engagement Indicator</title>
 	<script src="https://d3js.org/d3.v3.min.js"></script>
 <head>
 	<div>
 		<svg width="100%" height="150" class="banner">
-		  <rect width="100%" height="150" style="fill:rgb(1,147,215)" />
+		  <rect width="100%" height="150" style="fill:rgb(76,169,80)" />
 		</svg>
-		<svg width="100%" height="125" class="banner">
-		  <rect width="100%" height="125" style="fill:rgb(76,169,80)" />
+		<svg width="100%" height="130" class="banner">
+		  <rect width="100%" height="130" style="fill:rgb(1,147,215)" />
 		</svg>
 		<svg width="250" height="100" class="logo">
 		  <rect width="250" height="100" style="fill:rgb(255,255,255)" />
@@ -19,21 +19,18 @@
 </head>
 <body>
 
-	<div>
-	<h1>Global Biodiversity Engagement Monitor</h1>
+	<div id="introtext">
+	<h1>Global Biodiversity Engagement Indicator</h1>
 
 	<p>Below are biodiversity engagement scores using data from Twitter, Google Trends and various internet newspapapers.  Data below is shown for the month of November 2017.</p>
 	</div>
-	<select id='variable'>
-		<option value="trends" selected="selected">Google Trends</option>
-		<option value="twitter">Twitter</option>
-		<option value="news">Internet Newspapers</option>
-		<option value="overall">Overall Indicator</option>
-	</select>
-	<div id="barchart">
+	<div id="buttons">
+	<button id="trendsbutton" class='button'>Google Trends</button>
+	<button id="twitterbutton" class='button'>Twitter</button>	
+	<button id="newsbutton" class='button'>Online Newspapers</button>	
+	<button id="overallbutton" class='button'>Overall Indicator</button>
 	</div>
-	<div>
-	<p>Click here to download a factsheet for this indicator</p>
+	<div id="barchart">
 	</div>
 <script type="text/csv" id="data">
 ~~~Insert data here~~~
