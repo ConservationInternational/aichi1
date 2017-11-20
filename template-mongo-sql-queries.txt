@@ -7,7 +7,9 @@ db.getCollection('TWITTER-DETAIL').find({language: {$ne : 'en'}})
 SELECT issue, sum(count) FROM TWITTER-DETAIL GROUP BY issue
 db.getCollection('TWITTER-DETAIL').aggregate([{$group : { _id: "$issue", total: {$sum: "$count"}}}])
 
-SELECT issue, language, sum(count) FROM TWITTER-DETAIL GROUP BY issue, language ORDER BY sum(count) 
+SELECT issue, language, sum(count) 
+FROM TWITTER-DETAIL 
+GROUP BY issue, language ORDER BY sum(count) 
 db.getCollection('TWITTER-DETAIL').aggregate([{$group : {_id: {issue : '$issue', language: "$language"}, "count" : {$sum: '$count'}}}, {$sort: {count: -1}}])
 
 SELECT issue, language, sum(count) FROM TWITTER-DETAIL GROUP BY issue, language WHERE language <> 'en' ORDER BY sum(count) 

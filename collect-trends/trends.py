@@ -8,7 +8,7 @@ data = pd.read_csv("../collect-twitter/issues.csv", encoding='utf-8')
 kw_list = data['google_topic_id'].tolist()
 keyword = data['en'].tolist()
 
-countries = pd.read_csv("../countries.csv", encoding='utf-8')
+countries = pd.read_csv("../countries.csv", encoding='utf-8', na_filter=False)
 
 today = datetime.date.today()
 first = today.replace(day=1)
@@ -46,9 +46,9 @@ for i in range(0,len(kw_list)):
     for n in out['name']:
         if n not in countries['name'].tolist():
             print('WARNING! ' + n + ' missing from countries table')
-            9/0
     
-    comb = pd.merge(out, countries, how='inner', on='name')
+    comb = pd.merge(out, countries, how='outer', on='name')
+    comb = comb.fillna(0)
     
     for j in range(0, len(comb['alpha-2'])):
         incDict = {'country' : comb['alpha-2'][j], 'month' : month, 'issue': keyword[i]}
