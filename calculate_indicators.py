@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
 from pymongo import MongoClient
+import os
+
+os.chdir('/home/ec2-user/aichi1/')
 
 countries = pd.read_csv('countries.csv')
 countries.columns = ['fullname', 'country']
