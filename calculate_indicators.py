@@ -5,8 +5,8 @@ import os
 
 os.chdir('/home/ec2-user/aichi1/')
 
-countries = pd.read_csv('countries.csv')
-countries.columns = ['fullname', 'country']
+countries = pd.read_csv('countries_med.csv')
+countries.columns = ['country', 'geo', 'fullname']
 
 #Connect to MongoDB
 client = MongoClient('localhost', 27017)
