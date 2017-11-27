@@ -3,7 +3,8 @@ import numpy as np
 from pymongo import MongoClient
 import os
 
-os.chdir('/home/ec2-user/aichi1/')
+#os.chdir('/home/ec2-user/aichi1/')
+os.chdir('D:/Documents and Settings/mcooper/GitHub/aichi1/')
 
 countries = pd.read_csv('countries_med.csv')
 countries.columns = ['country', 'geo', 'fullname']
