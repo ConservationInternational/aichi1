@@ -1,13 +1,14 @@
 var select;
 var selection;
 
+var data = d3.select('#data').html().trim();
+var data = JSON.parse(data);
+
 d3.select("#trendsbutton")
   .on("click", function (){
-    var data = d3.select('#data').html().trim();
-
     var selection = 'trends'
     
-    data = d3.csv.parse(data, function (d) {
+    sel = data.map(function (d) {
       return {
         fullname: d.fullname,
         variable: +d[selection]
@@ -16,16 +17,14 @@ d3.select("#trendsbutton")
 
     d3.select('#barchart').html("");
 
-    updateGraph(data, "#357D57");
+    updateGraph(sel, "#357D57");
 });
 
 d3.select("#twitterbutton")
   .on("click", function (){
-    var data = d3.select('#data').html().trim();
-
     var selection = 'twitter'
     
-    data = d3.csv.parse(data, function (d) {
+    sel = data.map(function (d) {
       return {
         fullname: d.fullname,
         variable: +d[selection]
@@ -34,16 +33,14 @@ d3.select("#twitterbutton")
 
     d3.select('#barchart').html("");
 
-    updateGraph(data, "#1A5EAB");
+    updateGraph(sel, "#1A5EAB");
 });
 
 d3.select("#newsbutton")
   .on("click", function (){
-    var data = d3.select('#data').html().trim();
-
     var selection = 'news'
     
-    data = d3.csv.parse(data, function (d) {
+    sel = data.map(function (d) {
       return {
         fullname: d.fullname,
         variable: +d[selection]
@@ -52,16 +49,14 @@ d3.select("#newsbutton")
 
     d3.select('#barchart').html("");
 
-    updateGraph(data, "#E6673E");
+    updateGraph(sel, "#E6673E");
 });
 
 d3.select("#overallbutton")
   .on("click", function (){
-    var data = d3.select('#data').html().trim();
-
     var selection = 'overall'
     
-    data = d3.csv.parse(data, function (d) {
+    sel = data.map(function (d) {
       return {
         fullname: d.fullname,
         variable: +d[selection]
@@ -70,7 +65,7 @@ d3.select("#overallbutton")
 
     d3.select('#barchart').html("");
 
-    updateGraph(data, "#5b5c61");
+    updateGraph(sel, "#5b5c61");
 });
 
 function updateGraph(data, color) {
