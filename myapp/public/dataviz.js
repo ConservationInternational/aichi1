@@ -11,13 +11,16 @@ d3.select("#trendsbutton")
     sel = data.map(function (d) {
       return {
         fullname: d.fullname,
-        variable: +d[selection]
+        variable: +d[selection],
+	geo: d.geo
       };
     });
 
     d3.select('#barchart').html("");
+    d3.select('#map').html("");
 
     updateGraph(sel, "#357D57");
+    updateMap(sel, "#357D57");
 });
 
 d3.select("#twitterbutton")
@@ -27,13 +30,16 @@ d3.select("#twitterbutton")
     sel = data.map(function (d) {
       return {
         fullname: d.fullname,
-        variable: +d[selection]
+        variable: +d[selection],
+	geo: d.geo
       };
     });
 
     d3.select('#barchart').html("");
+    d3.select('#map').html("");
 
     updateGraph(sel, "#1A5EAB");
+    updateMap(sel, "#1A5EAB");
 });
 
 d3.select("#newsbutton")
@@ -43,13 +49,16 @@ d3.select("#newsbutton")
     sel = data.map(function (d) {
       return {
         fullname: d.fullname,
-        variable: +d[selection]
+        variable: +d[selection],
+	geo: d.geo
       };
     });
 
     d3.select('#barchart').html("");
+    d3.select('#map').html("");
 
     updateGraph(sel, "#E6673E");
+    updateMap(sel, "#E6673E");
 });
 
 d3.select("#overallbutton")
@@ -59,13 +68,16 @@ d3.select("#overallbutton")
     sel = data.map(function (d) {
       return {
         fullname: d.fullname,
-        variable: +d[selection]
+        variable: +d[selection],
+	geo: d.geo
       };
     });
 
     d3.select('#barchart').html("");
+    d3.select('#map').html("");
 
     updateGraph(sel, "#5b5c61");
+    updateMap(sel, "#5b5c61");
 });
 
 function updateGraph(data, color) {
@@ -95,7 +107,7 @@ function updateGraph(data, color) {
     top: 70,
     right: 20,
     bottom: 0,
-    left: 300
+    left: 267
   };
   
   var graphWidth = width - margins.right - margins.left;
@@ -150,3 +162,63 @@ function updateGraph(data, color) {
       return x(d.variable);
     });
 }
+
+function updateMap(data, color){
+
+  var mapdat = data.map(function(d){
+    var geoJson = JSON.parse(d.geo);
+    geoJson['properties']['variable'] = +d.variable;
+    geoJson['properties']['fullname'] = d.fullname;
+    return geoJson;
+  });
+
+  mapdat = {'type': 'FeatureCollection',
+            'features': mapdat};
+
+  var w = 1000;
+  var h = 500;
+
+  var minZoom;
+  var maxZoom;
+
+  var projection = d3.geo
+    .equirectangular()
+    .center([0,15])
+    .scale([w/(2*Math.PI)])
+    .translate([w/2, h/2]);
+
+  var path = d3.geo.path()
+    .projection(projection);
+
+  var graticule = d3.geo.graticule();
+
+  var svg = d3.select("#map").append("svg")
+    .attr("width", w)
+    .attr("height", h);
+
+  var values = mapdat.features.map(function(d) {
+    return d.properties.variable;
+  });
+
+  var colorRange = generateColor(color, "#FFFFFF", 5 )
+
+  var colorFunc = d3.scale.quantile()
+    .domain(values)
+    .range(colorRange)
+    
+  svg.selectAll(".land")
+    .data(mapdat.features)
+    .enter().append('path')
+    .attr('class', 'land')
+    .attr('d', path)
+    .attr("fill", function(d){
+      var out = colorFunc(d.properties.variable);
+      //Not sure why this is necessary but it seems to be so
+      if (d.properties.variable == 0) {
+        out = "#FFFFFF";
+      };
+      return out;
+    });
+};
+
+

@@ -20,10 +20,6 @@
     width: 775px;
 }
 
-#barcart{
-  margin: 0 auto;
-}
-
 .button{
   font-size: 20px;
   padding: 14px 28px;
@@ -48,6 +44,20 @@
   background-color: #5b5c61
 }
 
+#barcart{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#map{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.land {
+  stroke: #000000;
+  stroke-width: 0.5
+}
 
 * {
  font-family: Helvetica;
@@ -75,4 +85,9 @@ hr {
 }
 table, th, td {
     border: 1px solid black;
+}
+
+svg{
+    display: block;
+    margin: auto;
 }

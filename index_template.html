@@ -2,7 +2,10 @@
 <html>
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<title>Global Biodiversity Engagement Indicator</title>
-	<script src="https://d3js.org/d3.v3.min.js"></script>
+	<script src='http://code.jquery.com/jquery-2.0.3.js'></script>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="http://d3js.org/topojson.v0.min.js"></script>
+	<script src="auxfunctions.js"></script>
 <head>
 	<div>
 		<svg width="100%" height="150" class="banner">
@@ -29,6 +32,8 @@
 	<button id="twitterbutton" class='button'>Twitter</button>	
 	<button id="newsbutton" class='button'>Online Newspapers</button>	
 	<button id="overallbutton" class='button'>Overall Indicator</button>
+	</div>
+	<div id="map">
 	</div>
 	<div id="barchart">
 	</div>
