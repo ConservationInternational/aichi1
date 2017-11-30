@@ -155,7 +155,7 @@ sel = data.map(function (d) {
   };
 });
 
-updateGraph(sel, "#357D57");
+updateGraph(sel, "#1A5EAB");
 updateMap(sel, "#357D57");
 
 
