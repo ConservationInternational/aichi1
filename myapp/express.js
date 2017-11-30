@@ -10,9 +10,10 @@ app.use(logger('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Route for everything else.
-app.get('*', function(req, res){
-  res.send('Hello World');
-  });
+app.get('/Biodiversity Engagement Indicator.pdf', function(req, res){
+  var file = __dirname + 'public/Biodiveristy Engagement Indicator.pdf';
+  res.download(file);
+});
 
 // Fire it up!
 app.listen(3000);
