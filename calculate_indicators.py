@@ -92,7 +92,7 @@ html = f.read()
 f.close()
 html = html.replace("~~~Insert data here~~~", comb.to_json(orient='records'))
 
-f = open('myapp/public/index.html', 'w')
+f = open('myapp/public/factsheet.html', 'w')
 f.write(html)
 f.close()
 
