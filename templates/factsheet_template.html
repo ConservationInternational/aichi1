@@ -1,13 +1,15 @@
 <!DOCTYPE HTML>
 <html>
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<title>Global Biodiversity Engagement Indicator</title>
+	<link rel="stylesheet" type="text/css" href="factsheet_style.css">
+	<title class="words">Global Biodiversity Engagement Indicator</title>
 	<script src='http://code.jquery.com/jquery-2.0.3.js'></script>
 	<script src="http://d3js.org/d3.v3.min.js"></script>
 	<script src="http://d3js.org/topojson.v0.min.js"></script>
+	<script src="dataviz.js"></script>
 	<script src="auxfunctions.js"></script>
 <head>
-	<div>
+	<div id="introtext">
 		<svg width="100%" height="150" class="banner">
 		  <rect width="100%" height="150" style="fill:rgb(76,169,80)" />
 		</svg>
@@ -22,15 +24,46 @@
 </head>
 <body>
 
-	<div id="introtext">
-	<h1>Global Biodiversity Engagement Indicator</h1>
+	<div>
+	<h1 class="words">Global Biodiversity Engagement Indicator</h1>
 
-	<p>Below are biodiversity engagement scores using data from Twitter, Google Trends and various internet newspapapers.  Data below is shown for the month of November 2017.</p>
+	<p class="words" style="font-size:150%">Addressing the direct and underlying drivers of biodiversity loss will ultimately require behavioral change by individuals, organizations and governments. Understanding, awareness and appreciation of the diverse values of biodiversity, underpin the willingness of individuals to make the necessary changes and actions and to create the “political will” for governments to act.</p>
+	<p class="words" style="font-size:150%">The first Aichi Biodiversity Target is to increase people’s awareness of the value of biodiversity and the steps they can take to conserve and use it sustainably.  In order to assess this target for every country, we collected global data from Twitter, online newspapers, and Google Trends.  We looked for the scientific names for several thousand plan and animal species as well as keywords like “climate change,” “ecosystem services,” “biodiversity,” and “endangered species.”  While scientific names are language-independent, we translated the keywords into the 31 of the most common languages used on the internet.  We synthesized this data for the entire month of November 2017 to generate an indicator for every country on earth.
+	<h3 class="words">Map of Overall Indicator</h3>
+	<p class="words" style="font-size:150%">The country level indicator is visualized in the map below.</p>
 	</div>
 	<div id="map">
 	</div>
-	<div id="barchart">
+	<div>
+		<svg height="200" width="100%">
+		  <rect height="200" width="100%" style="fill:rgb(255,255,255)"/>
+		</svg> 
 	</div>
+		<div id="middletext">
+		<svg width="100%" height="150" class="mbanner">
+		  <rect width="100%" height="150" style="fill:rgb(76,169,80)" />
+		</svg>
+		<svg width="100%" height="130" class="mbanner">
+		  <rect width="100%" height="130" style="fill:rgb(1,147,215)" />
+		</svg>
+		<svg width="250" height="100" class="mlogo">
+		  <rect width="250" height="100" style="fill:rgb(255,255,255)" />
+		</svg>
+		<img src="img/logo.png" height="100" width="250" class="mlogo"/>
+	</div>
+	<h2 id="secondtitle" class="words">Digging Into the Data</h2>
+	<h3 class="words">Twitter</h3>
+	<p class="words">We have a constant connection with the Twitter streaming API, getting a baseline rate of tweets for every country and then calculating percentage of tweets that contain a species or a keyword in any langauge.  Rates are then scaled between 0 and 100. The graph below shows the top 10 countries for data from Twitter.</p>
+	<div id="twitterchart"></div>
+	<h3 class="words">Online News</h3>
+	<p class="words">Similar to the data from Twitter, we calculate the percentage of online newspapers that contain text matching the keywords in any language, and scale the result from 0 to 100.  Data for online newspapers is sources from webhose.io. The graph below shows the top 10 countries for data from online newspapers.</p>
+	<div id="newschart"></div>
+	<h3 class="words">Google Trends</h3>
+	<p class="words">For Google Trends, we search for each of our keywords as a Topic, meaning that Google will match that keyword to other languages and also return the prevalence of related keywords.  Google Trends data is already scaled from 0 to 100, and we calculate the average score for a country across all of the topics. The graph below shows the top 10 countries for data from Google Trends.</p>
+	<div id="trendschart"></div>
+	<h3 class="words">Overall Indicator</h3>
+	<p class="words">Finally, the scores across all three data sources are averaged.  For countries that did not have data available for a data source, the score is calculated as the average for sources that were available. The graph below shows the top 10 countries by overall score.</p>
+	<div id="overallchart"></div>
 <script type="text/csv" id="data">
 ~~~Insert data here~~~
 </script>

@@ -1,86 +1,4 @@
-var select;
-var selection;
-
-var data = d3.select('#data').html().trim();
-var data = JSON.parse(data);
-
-d3.select("#trendsbutton")
-  .on("click", function (){
-    var selection = 'trends'
-    
-    sel = data.map(function (d) {
-      return {
-        fullname: d.fullname,
-        variable: +d[selection],
-	geo: d.geo
-      };
-    });
-
-    d3.select('#barchart').html("");
-    d3.select('#map').html("");
-
-    updateGraph(sel, "#357D57");
-    updateMap(sel, "#357D57");
-});
-
-d3.select("#twitterbutton")
-  .on("click", function (){
-    var selection = 'twitter'
-    
-    sel = data.map(function (d) {
-      return {
-        fullname: d.fullname,
-        variable: +d[selection],
-	geo: d.geo
-      };
-    });
-
-    d3.select('#barchart').html("");
-    d3.select('#map').html("");
-
-    updateGraph(sel, "#1A5EAB");
-    updateMap(sel, "#1A5EAB");
-});
-
-d3.select("#newsbutton")
-  .on("click", function (){
-    var selection = 'news'
-    
-    sel = data.map(function (d) {
-      return {
-        fullname: d.fullname,
-        variable: +d[selection],
-	geo: d.geo
-      };
-    });
-
-    d3.select('#barchart').html("");
-    d3.select('#map').html("");
-
-    updateGraph(sel, "#E6673E");
-    updateMap(sel, "#E6673E");
-});
-
-d3.select("#overallbutton")
-  .on("click", function (){
-    var selection = 'overall'
-    
-    sel = data.map(function (d) {
-      return {
-        fullname: d.fullname,
-        variable: +d[selection],
-	geo: d.geo
-      };
-    });
-
-    d3.select('#barchart').html("");
-    d3.select('#map').html("");
-
-    updateGraph(sel, "#5b5c61");
-    updateMap(sel, "#5b5c61");
-});
-
-function updateGraph(data, color) {
+function updateGraph(data, color, id, n) {
   var data = data.filter(function(d){
     return d.variable != 0;
   });
@@ -90,6 +8,8 @@ function updateGraph(data, color) {
     if(a.variable < b.variable) return 1;
     return 0;
   });
+
+  var data = data.slice(0, n);
   
   var countries = data.map(function(d){
     return d.fullname;
@@ -98,13 +18,13 @@ function updateGraph(data, color) {
   var width = 1000;
   var height = 15*countries.length;
 
-  var svg = d3.select('#barchart')
+  var svg = d3.select(id)
     .append('svg')
     .attr('width', width)
     .attr('height', height);
   
   var margins = {
-    top: 70,
+    top: 22,
     right: 20,
     bottom: 0,
     left: 267
@@ -200,11 +120,11 @@ function updateMap(data, color){
     return d.properties.variable;
   });
 
-  var colorRange = generateColor(color, "#FFFFFF", 5 )
+  var colorRange = generateColor(color, "#FFFFFF", 10);
 
-  var colorFunc = d3.scale.quantile()
+  colorFunc = d3.scale.quantile()
     .domain(values)
-    .range(colorRange)
+    .range(colorRange);
     
   svg.selectAll(".land")
     .data(mapdat.features)
@@ -219,6 +139,45 @@ function updateMap(data, color){
       };
       return out;
     });
+
+  var ls_w = 90, ls_h = 20;
+
+  qrange = function(func) {
+    var a = [0];
+    for (var i=0; i<100; i++) {
+      if (func(i) != func(i + 1)){
+        a.push(i + 1);
+      }
+    }
+    return a;
+  }
+
+  var breaks = qrange(colorFunc);
+
+  var legend = svg.selectAll("legend")
+    .data(breaks)
+    .enter().append("g")
+    .attr("class", "legend");
+
+  var start = (w - ls_w*breaks.length + ls_w)/2
+
+  legend.append("rect")
+    .attr("y", 480)
+    .attr("x", function(d, i){ return w - (i*ls_w) - start;})
+    .attr("width", ls_w)
+    .attr("height", ls_h)
+    .style("fill", function(d, i) { return colorFunc(d); })
+
+  breaks.push(100);
+
+  svg.selectAll(".legend-label")
+    .data(breaks)
+    .enter().append("text")
+    .attr('class', "legend-label")
+    .attr("y", 477)
+    .attr("x", function(d, i) { return w - (i*ls_w) + ls_w - start - 5; })
+    .text(function(d) { return d; });
+
 };
 
 

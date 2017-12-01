@@ -1,10 +1,11 @@
 <!DOCTYPE HTML>
 <html>
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<title>Global Biodiversity Engagement Indicator</title>
+	<title class="words">Global Biodiversity Engagement Indicator</title>
 	<script src='http://code.jquery.com/jquery-2.0.3.js'></script>
 	<script src="http://d3js.org/d3.v3.min.js"></script>
 	<script src="http://d3js.org/topojson.v0.min.js"></script>
+	<script src="dataviz.js"></script>
 	<script src="auxfunctions.js"></script>
 <head>
 	<div>
@@ -23,9 +24,10 @@
 <body>
 
 	<div id="introtext">
-	<h1>Global Biodiversity Engagement Indicator</h1>
-
-	<p>Below are biodiversity engagement scores using data from Twitter, Google Trends and various internet newspapapers.  Data below is shown for the month of November 2017.</p>
+	<h1 class="words">Global Biodiversity Engagement Indicator</h1>
+	<p class="words">Addressing the direct and underlying drivers of biodiversity loss will ultimately require behavioral change by individuals, organizations and governments. Understanding, awareness and appreciation of the diverse values of biodiversity, underpin the willingness of individuals to make the necessary changes and actions and to create the “political will” for governments to act.</p>
+	<p class="words">The first Aichi Biodiversity Target is to increase people’s awareness of the value of biodiversity and the steps they can take to conserve and use it sustainably. In order to assess this target for every country, we collected global data from Twitter, online newspapers, and Google Trends. We looked for the scientific names for several thousand plan and animal species as well as keywords like “climate change,” “ecosystem services,” “biodiversity,” and “endangered species.” While scientific names are language-independent, we translated the keywords into the 31 of the most common languages used on the internet. We synthesized this data for the entire month of November 2017 to generate an indicator for every country on earth.</p>
+	<p class="words">Click one of the buttons below to see biodiversity engagement scores using data from Twitter, Google Trends, various internet newspapapers, or the overall indicator.  Data is shown for the month of November 2017.</p>
 	</div>
 	<div id="buttons">
 	<button id="trendsbutton" class='button'>Google Trends</button>
@@ -35,15 +37,17 @@
 	</div>
 	<div id="map">
 	</div>
+	<h2 class="words">Overall Rankings</h2>
+	<p class="words">The graph below shows the rankings for each country across the data source you selected.</p>
 	<div id="barchart">
 	</div>
 	<footer>
-	<p>You can also download a <a href="Biodiversity Engagement Indicator.pdf">PDF factsheet</a> summarizing the indicator.</p>
+	<p class="words">You can also download a <a href="Biodiversity Engagement Indicator.pdf">PDF factsheet</a> summarizing the indicator.</p>
 	</footer>
 <script type="text/csv" id="data">
 ~~~Insert data here~~~
 </script>
-<script src="dataviz.js"></script>
+<script src="index_dataviz.js"></script>
 </body>
 </html>
 
