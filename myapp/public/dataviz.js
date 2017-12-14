@@ -156,7 +156,7 @@ function updateMap(data, color){
         .style("stroke-width", 2);
       tooltip
         .style("visibility", "visible")
-        .text((d.properties.fullname + ': ' +  Math.round(d.properties.variable*10)/10).replace(": 0", ": No Data"))
+        .text((d.properties.fullname + ': ' +  Math.round(d.properties.variable*10)/10).replace(/: 0$/, ": No Data"))
     })
     .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
     .on("mouseout", function(d){
