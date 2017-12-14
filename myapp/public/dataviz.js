@@ -81,6 +81,8 @@ function updateGraph(data, color, id, n) {
     .attr('width', function(d) {
       return x(d.variable);
     });
+    //.on("mouseover", graphMouseOver)
+    //.on("mouseout", graphMouseOut);
 }
 
 function updateMap(data, color){
@@ -125,7 +127,20 @@ function updateMap(data, color){
   colorFunc = d3.scale.quantile()
     .domain(values)
     .range(colorRange);
-    
+  
+  var tooltip = d3.select('#map')
+    .append("div")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("color", "black")
+    .style("font-weight", "bold")
+    .style("background-color", "white")
+    .style("border", "1px solid #000000")
+    .style("border-radius", "15px")
+    .style("padding-right", "10px")
+    .style("padding-left", "10px")
+    .style("visibility", "hidden");
+ 
   svg.selectAll(".land")
     .data(mapdat.features)
     .enter().append('path')
@@ -138,6 +153,20 @@ function updateMap(data, color){
         out = "#FFFFFF";
       };
       return out;
+    })
+    .on("mouseover", function(d){
+      d3.select(this)
+        .style("stroke-width", 2);
+      tooltip
+        .style("visibility", "visible")
+        .text((d.properties.fullname + ': ' +  Math.round(d.properties.variable*10)/10).replace(": 0", ": No Data"))
+    })
+    .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+    .on("mouseout", function(d){
+      d3.select(this)
+        .style("stroke-width", 0.5);
+      tooltip
+        .style("visibility", "hidden");
     });
 
   var ls_w = 90, ls_h = 20;
