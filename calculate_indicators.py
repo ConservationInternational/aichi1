@@ -72,7 +72,7 @@ comb['overall'] = comb[['trends', 'twitter', 'news']].mean(axis=1)
 comb = pd.merge(comb, countries, how='inner', on=['country'])
 
 #Temporary!! Subset to just November for easier visualization for now.
-comb = comb[comb.month=='2017-11']
+comb = comb[comb.month=='2017-12']
 
 comb.to_csv('indicator.csv', index=False)
 
