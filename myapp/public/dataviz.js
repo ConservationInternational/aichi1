@@ -100,9 +100,6 @@ function updateMap(data, color){
   var w = 1000;
   var h = 500;
 
-  var minZoom;
-  var maxZoom;
-
   var projection = d3.geo
     .equirectangular()
     .center([0,15])
@@ -200,8 +197,6 @@ function updateMap(data, color){
   var maxval = d3.max(mapdat.features, function(d){
     return Math.round(d.properties.variable);
   });
-
-  console.log(maxval);
 
   breaks.push(maxval);
 
