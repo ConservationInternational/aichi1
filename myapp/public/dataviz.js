@@ -197,7 +197,13 @@ function updateMap(data, color){
     .attr("height", ls_h)
     .style("fill", function(d, i) { return colorFunc(d); })
 
-  breaks.push(100);
+  var maxval = d3.max(mapdat.features, function(d){
+    return Math.round(d.properties.variable);
+  });
+
+  console.log(maxval);
+
+  breaks.push(maxval);
 
   svg.selectAll(".legend-label")
     .data(breaks)
