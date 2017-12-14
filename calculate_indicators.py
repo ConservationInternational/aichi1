@@ -68,6 +68,8 @@ comb = pd.merge(pd.merge(trends, twitter, how='outer', on=['country', 'month']),
 comb[comb==0] = np.NaN
 
 comb['overall'] = comb[['trends', 'twitter', 'news']].mean(axis=1)
+NAsums = comb[['trends', 'twitter', 'news']].isnull().sum(axis=1)
+comb['overall'][NAsums == 1] = np.NaN
 
 comb = pd.merge(comb, countries, how='inner', on=['country'])
 
