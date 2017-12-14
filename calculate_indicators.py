@@ -3,6 +3,7 @@ import numpy as np
 from pymongo import MongoClient
 import os
 
+#os.chdir('D://Documents and Settings/mcooper/GitHub/aichi1/')
 os.chdir('/home/ec2-user/aichi1/')
 
 countries = pd.read_csv('countries_med.csv', na_filter=False)
@@ -67,9 +68,11 @@ news = rescaledf(news, 'month', 'news')
 comb = pd.merge(pd.merge(trends, twitter, how='outer', on=['country', 'month']), news, how='outer', on=['country', 'month'])
 comb[comb==0] = np.NaN
 
+
+#Get overall indicator, only where 2 sources exist    
 comb['overall'] = comb[['trends', 'twitter', 'news']].mean(axis=1)
 NAsums = comb[['trends', 'twitter', 'news']].isnull().sum(axis=1)
-comb['overall'][NAsums == 1] = np.NaN
+comb['overall'][NAsums == 2] = np.NaN
 
 comb = pd.merge(comb, countries, how='inner', on=['country'])
 
