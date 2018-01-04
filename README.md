@@ -1,2 +1,4 @@
 # aichi1
-Collecting data on public engagement with biodiversity using social media streams
+Measuring public engagement with biodiversity using data from twitter, online newspapers and Google Trends.
+
+See the data visualized [here](http://biodiversityengagementindicator.com).
