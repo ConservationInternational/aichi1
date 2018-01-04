@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from pymongo import MongoClient
 import os
+import datetime
 
 #os.chdir('D://Documents and Settings/mcooper/GitHub/aichi1/')
 os.chdir('/home/ec2-user/aichi1/')
@@ -76,9 +77,6 @@ comb['overall'][NAsums == 2] = np.NaN
 
 comb = pd.merge(comb, countries, how='inner', on=['country'])
 
-#Temporary!! Subset to just November for easier visualization for now.
-comb = comb[comb.month=='2017-12']
-
 comb.to_csv('indicator.csv', index=False)
 
 #Add data to dashboard
@@ -87,6 +85,13 @@ html = f.read()
 f.close()
 html = html.replace("~~~Insert data here~~~", comb.to_json(orient='records'))
 
+#Also get latest month and update html
+date = datetime.datetime.now() - datetime.timedelta(days=5);
+year = str(date)[:4]
+month = date.strftime("%B")
+html = html.replace("~~~MonthYear~~~", month + ', ' + year)
+
+#Write updated html
 f = open('myapp/public/index.html', 'w')
 f.write(html)
 f.close()

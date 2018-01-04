@@ -1,8 +1,8 @@
 function updateGraph(data, color, id, n) {
   var data = data.filter(function(d){
-    return d.variable != 0;
+    return (d.variable != 0);
   });
-  
+ 
   var data = data.sort(function(a, b){
     if(a.variable > b.variable) return -1;
     if(a.variable < b.variable) return 1;
