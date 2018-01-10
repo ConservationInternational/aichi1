@@ -66,6 +66,16 @@ twitter = rescaledf(twitter, 'month', 'twitter')
 news = pd.DataFrame(news)
 news = rescaledf(news, 'month', 'news')
 
+#Fix Month and Date Format Issues
+def reformatMonthStr(string):
+    if len(string)==7 and string[5]=='0':
+        string = string[:5] + string[6:]
+    return(string)
+
+twitter['month'] = twitter['month'].apply(reformatMonthStr)
+trends['month'] = trends['month'].apply(reformatMonthStr)
+
+#Merge it all together
 comb = pd.merge(pd.merge(trends, twitter, how='outer', on=['country', 'month']), news, how='outer', on=['country', 'month'])
 comb[comb==0] = np.NaN
 
@@ -86,7 +96,7 @@ f.close()
 html = html.replace("~~~Insert data here~~~", comb.to_json(orient='records'))
 
 #Also get latest month and update html
-date = datetime.datetime.now() - datetime.timedelta(days=5);
+date = datetime.datetime.now() - datetime.timedelta(days=3);
 year = str(date)[:4]
 month = date.strftime("%B")
 html = html.replace("~~~MonthYear~~~", month + ', ' + year)
