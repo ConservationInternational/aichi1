@@ -16,8 +16,8 @@ os.chdir('/home/ec2-user/aichi1/collect-webhose')
 
 print('Establish connections')
 client = MongoClient('localhost', 27017)
-detailcon = client.TWITTER['webhose-detail-test']
-baselinecon = client.TWITTER['webhose-test']
+detailcon = client.TWITTER['WEBHOSE-DETAIL']
+baselinecon = client.TWITTER['WEBHOSE-BASELINE']
 
 ###########################
 #Define Functions
@@ -74,11 +74,11 @@ for thetime in ['2017-01-13', '2017-01-14', '2017-01-15', '2017-01-16']:
     month = str(twodaysago.year) + '-' + str(twodaysago.month)
     day = str(yesterday.year) + '-' + str(yesterday.month) + '-' + str(yesterday.day)
     
-    twodaysago = str(twodaysago.year) + str(twodaysago.month) + str(twodaysago.day)
-    yesterday = str(yesterday.year) + str(yesterday.month) + str(yesterday.day)
+    twodaysago = str(twodaysago.year) + '-' + str(twodaysago.month) + '-' + str(twodaysago.day)
+    yesterday = str(yesterday.year) + '-' + str(yesterday.month) + '-' + str(yesterday.day)
     
-    start = str(int(time.mktime(datetime.strptime(twodaysago, "%Y%m%d").timetuple()) * 1000))
-    stop = str(int(time.mktime(datetime.strptime(yesterday, "%Y%m%d").timetuple()) * 1000))
+    start = str(int(time.mktime(datetime.strptime(twodaysago, "%Y-%m-%d").timetuple()) * 1000))
+    stop = str(int(time.mktime(datetime.strptime(yesterday, "%Y-%m-%d").timetuple()) * 1000))
 
     #####################################
     #Build word list chunks
