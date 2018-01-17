@@ -69,11 +69,11 @@ yesterday = datetime.now() - timedelta(days=1)
 month = str(twodaysago.year) + '-' + str(twodaysago.month)
 day = str(yesterday.year) + '-' + str(yesterday.month) + '-' + str(yesterday.day)
 
-twodaysago = str(twodaysago.year) + str(twodaysago.month) + str(twodaysago.day)
-yesterday = str(yesterday.year) + str(yesterday.month) + str(yesterday.day)
+twodaysago = str(twodaysago.year) + '-' + str(twodaysago.month) + '-' + str(twodaysago.day)
+yesterday = str(yesterday.year) + '-' + str(yesterday.month) + '-' + str(yesterday.day)
 
-start = str(int(time.mktime(datetime.strptime(twodaysago, "%Y%m%d").timetuple()) * 1000))
-stop = str(int(time.mktime(datetime.strptime(yesterday, "%Y%m%d").timetuple()) * 1000))
+start = str(int(time.mktime(datetime.strptime(twodaysago, "%Y-%m-%d").timetuple()) * 1000))
+stop = str(int(time.mktime(datetime.strptime(yesterday, "%Y-%m-%d").timetuple()) * 1000))
 
 #####################################
 #Build word list chunks
