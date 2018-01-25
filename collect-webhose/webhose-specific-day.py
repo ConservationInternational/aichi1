@@ -58,7 +58,7 @@ issues_melt = pd.melt(issues.drop('google_topic_id', axis=1))
 issues_melt = issues_melt.loc[issues_melt['value'] != 'XyEf9fAl2IuV6u97aM7a']
 
 
-for thetime in ['2017-01-13', '2017-01-14', '2017-01-15', '2017-01-16']:
+for thetime in ['2018-01-13', '2018-01-14', '2018-01-15', '2018-01-16']:
 ########################
 #Get times
 ########################
@@ -73,12 +73,18 @@ for thetime in ['2017-01-13', '2017-01-14', '2017-01-15', '2017-01-16']:
     
     month = str(twodaysago.year) + '-' + str(twodaysago.month)
     day = str(yesterday.year) + '-' + str(yesterday.month) + '-' + str(yesterday.day)
-    
+   
+    print('Day is ' + day)
+ 
     twodaysago = str(twodaysago.year) + '-' + str(twodaysago.month) + '-' + str(twodaysago.day)
     yesterday = str(yesterday.year) + '-' + str(yesterday.month) + '-' + str(yesterday.day)
     
     start = str(int(time.mktime(datetime.strptime(twodaysago, "%Y-%m-%d").timetuple()) * 1000))
     stop = str(int(time.mktime(datetime.strptime(yesterday, "%Y-%m-%d").timetuple()) * 1000))
+
+    print('Start on ' + twodaysago + ' ' + str(start))
+    print('Stop on ' + yesterday + ' ' + str(stop))
+
 
     #####################################
     #Build word list chunks
@@ -100,6 +106,7 @@ for thetime in ['2017-01-13', '2017-01-14', '2017-01-15', '2017-01-16']:
         q = '("' + '" OR "'.join(wl) + '") published:>' + start + ' published:<' + stop + ' site_type:news'
         query_params = {"q": q, "ts":start}
         output = webhoseio.query("filterWebContent", query_params)
+        print('We got ' + str(len(output['posts'])) + ' results')
         if wordlists.index(wl) == 0:
             beginRequests = output['requestsLeft']
             print('----------------------------\nBegan with ' + str(beginRequests + 1) + ' requests available\n')    
