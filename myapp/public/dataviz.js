@@ -1,4 +1,12 @@
-function updateGraph(data, color, selection, id, n) {
+function updateGraph(color, selection, id, n) {
+  d3.select(id)
+    .html("");
+
+  d3.csv('indicator.csv', function(error, data){
+    if (error) throw err;
+
+  console.log(data);
+
   d3.select('#barchart').html("");
 
   var d = new Date();
@@ -29,6 +37,8 @@ function updateGraph(data, color, selection, id, n) {
 
   var data = data.slice(0, n);
   
+  console.log(data);
+
   var countries = data.map(function(d){
     return d.fullname;
   });
@@ -61,7 +71,7 @@ function updateGraph(data, color, selection, id, n) {
   var y = d3.scale.ordinal()
     .domain(countries)
     .rangeBands([0, graphHeight], 0.1, 0.1);
-  
+ 
   var xAxis = d3.svg.axis()
     .scale(x)
     .orient("top");
@@ -102,9 +112,16 @@ function updateGraph(data, color, selection, id, n) {
     });
     //.on("mouseover", graphMouseOver)
     //.on("mouseout", graphMouseOut);
+});
 }
 
-function updateMap(data, color, selection){
+function updateMap(color, selection){
+  d3.select("#map").
+    html("");
+
+  d3.csv('indicator.csv', function(error, data){
+    if (error) throw error;
+
   d3.select("#map").html("");
 
   var d = new Date();
@@ -250,12 +267,19 @@ function updateMap(data, color, selection){
     .attr("x", function(d, i) { return w - (i*ls_w) + ls_w - start - 5; })
     .text(function(d) { return d; });
 
+});
 };
 
 function updateTS(data, country) {
+  d3.select("tschart")
+    .html("");
+
+  d3.csv('indicator.csv', function(error, tsdata){
+    if (error) throw error;
+
   var parseDate = d3.time.format("%Y-%m");
 
-  var tsdata = data.filter(function(d){
+  var tsdata = tsdata.filter(function(d){
     return (d.country == country);
   }).map(function(d) {
     d.pmonth = parseDate.parse(d.month);
@@ -265,6 +289,8 @@ function updateTS(data, country) {
     if(a.pmonth < b.pmonth) return 1;
     return 0;
   });
+
+  console.log(tsdata);
 
   var margin = {top: 50, right: 30, bottom: 60, left: 90},
       width = 1000 - margin.left - margin.right,
@@ -320,10 +346,16 @@ function updateTS(data, country) {
 
   x.domain([d3.min(tsdata, function(d) { return d.pmonth.getTime() - 2.628e+9; }),
             d3.max(tsdata, function(d) { return d.pmonth.getTime() + 2.628e+9; })]);
-  y.domain([0, d3.max([].concat(tsdata.map(function(d) { return d.overall; }),
-                                tsdata.map(function(d) { return d.twitter; }),
-                                tsdata.map(function(d) { return d.trends; }),
-                                tsdata.map(function(d) { return d.news; })))]);
+
+  console.log([].concat(tsdata.map(function(d) { return +d.overall; }),
+                                tsdata.map(function(d) { return +d.twitter; }),
+                                tsdata.map(function(d) { return +d.trends; }),
+                                tsdata.map(function(d) { return +d.news; })));
+
+  y.domain([0, d3.max([].concat(tsdata.map(function(d) { return +d.overall; }),
+                                tsdata.map(function(d) { return +d.twitter; }),
+                                tsdata.map(function(d) { return +d.trends; }),
+                                tsdata.map(function(d) { return +d.news; })))]);
 
   // Draw the y Grid lines
   svg.append("g")
@@ -417,6 +449,7 @@ function updateTS(data, country) {
   svg.append("g")
     .attr("class", "y axis")
     .call(yAxis)
+});
 };
 
 

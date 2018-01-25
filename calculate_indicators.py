@@ -86,39 +86,5 @@ NAsums = comb[['trends', 'twitter', 'news']].isnull().sum(axis=1)
 comb['overall'][NAsums == 2] = np.NaN
 
 comb = pd.merge(comb, countries, how='inner', on=['country'])
-
-comb.to_csv('indicator.csv', index=False)
-
-#Add data to dashboard
-f = open('templates/index_template.html', 'r')
-html = f.read()
-f.close()
-html = html.replace("~~~Insert data here~~~", comb.to_json(orient='records'))
-
-#Also get latest month and update html
-date = datetime.datetime.now() - datetime.timedelta(days=3);
-year = str(date)[:4]
-month = date.strftime("%B")
-html = html.replace("~~~MonthYear~~~", month + ', ' + year)
-
-#Write updated html
-f = open('myapp/public/index.html', 'w')
-f.write(html)
-f.close()
-
-#Add data to factsheet
-f = open('templates/factsheet_template.html', 'r')
-html = f.read()
-f.close()
-html = html.replace("~~~Insert data here~~~", comb.to_json(orient='records'))
-
-f = open('myapp/public/factsheet.html', 'w')
-f.write(html)
-f.close()
-
-
-
-
-
-
+comb.to_csv('myapp/public/indicator.csv', index=False)
 
