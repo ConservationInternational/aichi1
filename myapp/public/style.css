@@ -30,32 +30,29 @@
 }
 
 #buttons{
-    margin: 0 auto;
-    width: 775px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 550px;
 }
 
 .button{
-  font-size: 20px;
-  padding: 14px 28px;
-  border-radius: 12px;
+  height: 250px;
+  width: 250px;
+  font-size: 32px;
+  border-radius: 100%;
   color: white;
   border: none;
 }
 
-#trendsbutton{
-  background-color: #E6673E
+#geobutton{
+  margin-left: 0px;
+  background-color: #4CA950
 }
 
-#twitterbutton{
-  background-color: #1A5EAB
-}
-
-#newsbutton{
-  background-color: #5b5c61
-}
-
-#overallbutton{
-  background-color: #357D57
+#tsbutton{
+  margin-left: auto;
+  margin-right: 0px;
+  background-color: #0193D7
 }
 
 #barchart{

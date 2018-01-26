@@ -27,20 +27,22 @@
 	<h1 class="words">Global Biodiversity Engagement Indicator</h1>
 	<p class="words">Addressing the direct and underlying drivers of biodiversity loss will ultimately require behavioral change by individuals, organizations and governments. Understanding, awareness and appreciation of the diverse values of biodiversity underpin the willingness of individuals to make the necessary changes and actions and to create the “political will” for governments to act.</p>
 	<p class="words">The first Aichi Biodiversity Target is to increase people’s awareness of the value of biodiversity and the steps they can take to conserve and use it sustainably. In order to assess this target for every country, we collected global data from Twitter, online newspapers, and Google Trends. We looked for the scientific names for several thousand plant and animal species as well as keywords like “climate change,” “ecosystem services,” “biodiversity,” and “endangered species.” While scientific names are language-independent, we translated the keywords into the 31 of the most common languages used on the internet. We then synthesized this data to generate a monthly indicator for every country on earth.</p>
-	<p class="words">Click one of the buttons below to see biodiversity engagement scores using data from Twitter, Google Trends, various internet newspapers, or the overall indicator.</p>
+	<p class="words">Click one of the buttons below to see biodiversity engagement scores.  You can either view data temporally for one country across multiple months, or geographically for one month across multiple countries.</p>
 	</div>
 	<div id="buttons">
-	<button id="trendsbutton" class='button'>Google Trends</button>
-	<button id="twitterbutton" class='button'>Twitter</button>	
-	<button id="newsbutton" class='button'>Online Newspapers</button>	
-	<button id="overallbutton" class='button'>Overall Indicator</button>
+	<button id="geobutton" class='button' onclick="buttonclick()">Analyze<br>Geographically</button>
+	<button id="tsbutton" class='button' onclick="buttonclick()">Analyze<br>   Temporally   </button>	
 	</div>
+	<h2 class="words" id="maptitle"></h2>
+	<p class="words" id="maptext"></p>
 	<div id="map">
 	</div>
+	<h2 class="words" id="tstitle"></h2>
+	<p class="words" id="tstext"></h2>
 	<div id="tschart">
 	</div>
-	<h2 class="words">Overall Rankings</h2>
-	<p class="words">The graph below shows the rankings for each country across the data source you selected.</p>
+	<h2 class="words" id="bartitle"></h2>
+	<p class="words" id="bartext"></p>
 	<div id="barchart">
 	</div>
 	<footer>

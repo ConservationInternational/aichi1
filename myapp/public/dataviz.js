@@ -218,12 +218,6 @@ function updateMap(color, selection){
       tooltip
         .style("visibility", "hidden");
     })
-    .on("click", function(d){
-      var countryname = d.properties['alpha-2'];
-      d3.select('#tschart').html("");
-      var tsdata = data;
-      updateTS(tsdata, countryname);
-    });
 
   var ls_w = 90, ls_h = 20;
 
@@ -267,10 +261,11 @@ function updateMap(color, selection){
     .attr("x", function(d, i) { return w - (i*ls_w) + ls_w - start - 5; })
     .text(function(d) { return d; });
 
+  updateGraph(color, selection, "#barchart", 500)
 });
 };
 
-function updateTS(data, country) {
+function updateTS(country) {
   d3.select("tschart")
     .html("");
 
@@ -346,11 +341,6 @@ function updateTS(data, country) {
 
   x.domain([d3.min(tsdata, function(d) { return d.pmonth.getTime() - 2.628e+9; }),
             d3.max(tsdata, function(d) { return d.pmonth.getTime() + 2.628e+9; })]);
-
-  console.log([].concat(tsdata.map(function(d) { return +d.overall; }),
-                                tsdata.map(function(d) { return +d.twitter; }),
-                                tsdata.map(function(d) { return +d.trends; }),
-                                tsdata.map(function(d) { return +d.news; })));
 
   y.domain([0, d3.max([].concat(tsdata.map(function(d) { return +d.overall; }),
                                 tsdata.map(function(d) { return +d.twitter; }),
