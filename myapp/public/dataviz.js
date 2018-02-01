@@ -5,8 +5,6 @@ function updateGraph(color, selection, id, n) {
   d3.csv('indicator.csv', function(error, data){
     if (error) throw err;
 
-  console.log(data);
-
   d3.select('#barchart').html("");
 
   var d = new Date();
@@ -37,8 +35,6 @@ function updateGraph(color, selection, id, n) {
 
   var data = data.slice(0, n);
   
-  console.log(data);
-
   var countries = data.map(function(d){
     return d.fullname;
   });
@@ -261,14 +257,16 @@ function updateMap(color, selection){
     .attr("x", function(d, i) { return w - (i*ls_w) + ls_w - start - 5; })
     .text(function(d) { return d; });
 
+
+  console.log(selection);
+  console.log(color);
+
   updateGraph(color, selection, "#barchart", 500)
 });
 };
 
 function updateTS(country) {
-  d3.select("tschart")
-    .html("");
-
+  
   d3.csv('indicator.csv', function(error, tsdata){
     if (error) throw error;
 
@@ -284,8 +282,6 @@ function updateTS(country) {
     if(a.pmonth < b.pmonth) return 1;
     return 0;
   });
-
-  console.log(tsdata);
 
   var margin = {top: 50, right: 30, bottom: 60, left: 90},
       width = 1000 - margin.left - margin.right,

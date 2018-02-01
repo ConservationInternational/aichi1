@@ -30,7 +30,7 @@
 }
 
 #buttons{
-    margin-left: auto;
+    margin-left: 75px;
     margin-right: auto;
     width: 550px;
 }
@@ -42,6 +42,21 @@
   border-radius: 100%;
   color: white;
   border: none;
+}
+
+.transform {
+  -webkit-transition: all 1s ease;  
+  -moz-transition: all 1s ease;  
+  -o-transition: all 1s ease;  
+  -ms-transition: all 1s ease;  
+  transition: all 1s ease;
+}
+
+.transform-active {
+  font-size: 20px;
+  height: 75px;
+  width: 175px;
+  border-radius: 12px;
 }
 
 #geobutton{

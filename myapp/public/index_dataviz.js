@@ -1,15 +1,42 @@
-buttonclick = function(){
-  var attrstring = "font-size: 20px; border-radius: 12px; height: 75px; width: 175px;"
-  var geobutton = document.getElementById("geobutton")
-  var tsbutton = document.getElementById("tsbutton")
-  var buttondiv = document.getElementById("buttons")
+function whichTransitionEvent(){
+  var t,
+      el = document.createElement("fakeelement");
 
-  geobutton.setAttribute("style", attrstring)
-  tsbutton.setAttribute("style", attrstring)
-  buttons.setAttribute("style", "margin-left: 75px")
+  var transitions = {
+    "transition"      : "transitionend",
+    "OTransition"     : "oTransitionEnd",
+    "MozTransition"   : "transitionend",
+    "WebkitTransition": "webkitTransitionEnd"
+  }
+
+  for (t in transitions){
+    if (el.style[t] !== undefined){
+      return transitions[t];
+    }
+  }
 }
 
+var transitionEvent = whichTransitionEvent();
+
+$("#geobutton").click(function() {
+  $('.transform').addClass('transform-active');
+  $(this).one(transitionEvent, function(event){
+    var selection = 'trends'
+    wipeall();
+    updateMap("#E6673e", selection);
+  });
+});
+
+$("#tsbutton").click(function() {
+  $('.transform').addClass('transform-active');
+  $(this).one(transitionEvent, function(event){
+    wipeall();
+    updateTS("US");
+  });
+});
+
 wipeall = function(){
+  //d3.select("#mapdiv").html("")
   d3.select("#maptitle").html("");
   d3.select("#maptext").html("");
   d3.select("#bartitle").html("");
@@ -21,20 +48,4 @@ wipeall = function(){
   d3.select("#barchart").html("");
 }
 
-
-d3.select("#geobutton")
-  .on("click", function (){
-    var selection = 'trends'
-
-    wipeall()
-    
-    updateMap("#E6673e", selection);
-});
-
-d3.select("#tsbutton")
-  .on("click", function (){
-    wipeall()
-
-    updateTS("US");
-});
 
