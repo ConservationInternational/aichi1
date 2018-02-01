@@ -31,7 +31,10 @@ function setupMap(){
     .text(function (d) {return d; });
 
   //Create thematic dropdown 
-  var dataoptions = ["Twitter Data", "Internet Newspaper Data", "Google Trends Data", "Overall Indicator"];
+  var dataoptions = [{'label': "Twitter Data", 'color': "color:#1A5EAB"},
+                     {'label': "Internet Newspaper Data", "color": "color:#5b5c62"},
+                     {'label': "Google Trends Data", "color": "color:#e6673e"},
+                     {'label': "Overall Indicator", "color": "color:#357d57"}];
 
   var select = d3.select("#mapselect")
     .append('select')
@@ -43,7 +46,8 @@ function setupMap(){
     .selectAll('option')
     .data(dataoptions).enter()
     .append('option')
-    .text(function (d) { return d; });
+    .text(function (d) { return d.label; })
+    .attr('style', function(d) {return d.color});
 
   function onchange() {
     var monthLabel = d3.select('#monthselect').property('value');
@@ -147,9 +151,24 @@ function updateGraph(color, selection, id, n, monthyear) {
     .classed("y axis", true)
     .call(yAxis);
 
+  var colorRange = generateColor(color, "#FFFFFF", 10);
+
+  var tooltip = d3.select('#map')
+    .append("div")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("color", "black")
+    .style("font-weight", "bold")
+    .style("background-color", "white")
+    .style("border", "1px solid #000000")
+    .style("border-radius", "15px")
+    .style("padding-right", "10px")
+    .style("padding-left", "10px")
+    .style("visibility", "hidden");
+ 
   var bars = chart.selectAll('rect.bar')
     .data(data);
-  
+ 
   bars.enter()
     .append('rect')
     .attr('class', 'bar')
@@ -164,12 +183,24 @@ function updateGraph(color, selection, id, n, monthyear) {
       return y(d.fullname);
     })
     .attr('height', y.rangeBand())
+    .on("mouseover", function(d){
+      d3.select(this)
+        .style("fill", colorRange[5]);
+      tooltip
+        .style("visibility", "visible")
+        .text((d.fullname + ': ' +  Math.round(d.variable*10)/10).replace(/: 0$/, ": No Data"))
+    })
+    .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+    .on("mouseout", function(d){
+      d3.select(this)
+        .style("fill", color);
+      tooltip
+        .style("visibility", "hidden");
+    })
     .transition()
     .attr('width', function(d) {
       return x(d.variable);
-    });
-    //.on("mouseover", graphMouseOver)
-    //.on("mouseout", graphMouseOut);
+    })
 });
 }
 
