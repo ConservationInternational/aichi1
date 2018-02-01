@@ -81,8 +81,14 @@
 }
 
 #tschart{
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 5%;
+  float: left;
+}
+
+#tsbuttons{
+  margin-left: 790px;
+  width: 200px;
+  display: block;
 }
 
 #mapselect{
@@ -90,6 +96,18 @@
   width: 700px;
 }
 
+#tsselect{
+  margin: 0 auto;
+  width: 350px;
+}
+
+#newsbutton{
+  background-color: red;
+}
+
+#newsbutton:focus {
+  background-color: yellow;
+}
 
 select {
 	-webkit-appearance: none; 

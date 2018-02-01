@@ -31,6 +31,7 @@ $("#tsbutton").click(function() {
   $('.transform').addClass('transform-active');
   $(this).one(transitionEvent, function(event){
     wipeall();
+    setupTS();
     updateTS("US");
   });
 });
@@ -42,10 +43,12 @@ wipeall = function(){
   d3.select("#bartitle").html("");
   d3.select("#bartext").html("");
   d3.select("#tstitle").html("");
+  d3.select("#tsselect").html("");
   d3.select("#tstext").html("");
   d3.select("#map").html("");
   d3.select("#tschart").html("");
   d3.select("#barchart").html("");
+  d3.select("#tsbuttons").html("");
 }
 
 
