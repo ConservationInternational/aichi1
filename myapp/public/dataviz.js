@@ -1,4 +1,72 @@
-function updateGraph(color, selection, id, n) {
+function setupMap(){ 
+  //Update text for header and 
+  var maptitle = d3.select("#maptitle")
+    .text("Map of Data Sources and Overall Indicator By Country");
+
+  var maptext = d3.select("#maptext")
+    .text("Select a data source and a month to see a world map and a barchart show scores for a given month for each country.");
+
+  //Get the month
+  var dateStart = moment('2017-11-01');
+  var dateEnd = moment();
+  var timeValues = [];
+  var timeLabels = [];
+
+  while (dateEnd > dateStart  || dateStart.format('M') === dateEnd.format("M")){
+    timeValues.push(dateStart.format('YYYY-M'));
+    timeLabels.push(dateStart.format('MMMM YYYY'));
+    dateStart.add(1, 'month');
+  }
+
+  var mselect = d3.select("#mapselect")
+    .append('select')
+    .attr('class', 'select')
+    .attr('id', 'monthselect')
+    .on('change', onchange)
+
+  var moptions = mselect
+    .selectAll('option')
+    .data(timeLabels).enter()
+    .append('option')
+    .text(function (d) {return d; });
+
+  //Create thematic dropdown 
+  var dataoptions = ["Twitter Data", "Internet Newspaper Data", "Google Trends Data", "Overall Indicator"];
+
+  var select = d3.select("#mapselect")
+    .append('select')
+    .attr('class','select')
+    .attr('id', 'varselect')
+    .on('change',onchange)
+
+  var options = select
+    .selectAll('option')
+    .data(dataoptions).enter()
+    .append('option')
+    .text(function (d) { return d; });
+
+  function onchange() {
+    var monthLabel = d3.select('#monthselect').property('value');
+    var monthValue = timeValues[timeLabels.indexOf(monthLabel)]
+
+    var varValue = d3.select("#varselect").property('value');
+    
+    if(varValue == "Twitter Data"){
+      updateMap("#1A5EAB", "twitter", monthValue)
+    }
+    if(varValue == "Internet Newspaper Data"){
+      updateMap("#5b5c61", "news", monthValue)
+    }
+    if(varValue == "Google Trends Data"){
+      updateMap("#E6673e", "trends", monthValue)
+    }
+    if(varValue == "Overall Indicator"){
+      updateMap("#357d57", "overall", monthValue)
+    }
+  };
+};
+
+function updateGraph(color, selection, id, n, monthyear) {
   d3.select(id)
     .html("");
 
@@ -6,12 +74,6 @@ function updateGraph(color, selection, id, n) {
     if (error) throw err;
 
   d3.select('#barchart').html("");
-
-  var d = new Date();
-  d.setDate(d.getDate() - 3);
-  var year = d.getFullYear();
-  var month = d.getUTCMonth() + 1;
-  var monthyear = year + '-' + month;
 
   data = data.filter(function (d) {
     return (d.month == monthyear);
@@ -111,20 +173,16 @@ function updateGraph(color, selection, id, n) {
 });
 }
 
-function updateMap(color, selection){
+function updateMap(color, selection, monthyear){
   d3.select("#map").
+    html("");
+  d3.select("#barchart").
     html("");
 
   d3.csv('indicator.csv', function(error, data){
     if (error) throw error;
 
   d3.select("#map").html("");
-
-  var d = new Date();
-  d.setDate(d.getDate() - 3);
-  var year = d.getFullYear();
-  var month = d.getUTCMonth() + 1;
-  var monthyear = year + '-' + month;
 
   var sel = data.filter(function(d){
     return(d.month == monthyear);
@@ -257,11 +315,7 @@ function updateMap(color, selection){
     .attr("x", function(d, i) { return w - (i*ls_w) + ls_w - start - 5; })
     .text(function(d) { return d; });
 
-
-  console.log(selection);
-  console.log(color);
-
-  updateGraph(color, selection, "#barchart", 500)
+  updateGraph(color, selection, "#barchart", 500, monthyear)
 });
 };
 

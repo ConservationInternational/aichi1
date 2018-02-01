@@ -23,7 +23,7 @@ $("#geobutton").click(function() {
   $(this).one(transitionEvent, function(event){
     var selection = 'trends'
     wipeall();
-    updateMap("#E6673e", selection);
+    setupMap();
   });
 });
 
@@ -36,7 +36,7 @@ $("#tsbutton").click(function() {
 });
 
 wipeall = function(){
-  //d3.select("#mapdiv").html("")
+  d3.select("#mapselect").html("")
   d3.select("#maptitle").html("");
   d3.select("#maptext").html("");
   d3.select("#bartitle").html("");

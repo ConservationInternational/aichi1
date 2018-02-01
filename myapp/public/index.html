@@ -2,9 +2,10 @@
 <html>
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<title class="words">Global Biodiversity Engagement Indicator</title>
-	<script src='http://code.jquery.com/jquery-2.0.3.js'></script>
-	<script src="http://d3js.org/d3.v3.min.js"></script>
-	<script src="http://d3js.org/topojson.v0.min.js"></script>
+	<script src='libraries/jquery-2.0.3.js'></script>
+	<script src="libraries/d3.v3.min.js"></script>
+	<script src="libraries/topojson.v0.min.js"></script>
+	<script src="libraries/moment.js"></script>
 	<script src="dataviz.js"></script>
 	<script src="auxfunctions.js"></script>
 <head>
@@ -35,19 +36,20 @@
 	<button id="tsbutton" class='button transform'>Analyze<br>   Temporally   </button>	
 	</div>
 	<div id="mapdiv">
-		<h2 class="words" id="maptitle"></h2>
+		<h1 class="words" id="maptitle"></h2>
 		<p class="words" id="maptext"></p>
+		<div id="mapselect"></div>
 		<div id="map">
 		</div>
 	</div>
 	<div id="tsdiv">
-		<h2 class="words" id="tstitle"></h2>
+		<h1 class="words" id="tstitle"></h2>
 		<p class="words" id="tstext"></h2>
 		<div id="tschart">
 		</div>
 	</div>
 	<div id="bardiv">
-		<h2 class="words" id="bartitle"></h2>
+		<h1 class="words" id="bartitle"></h2>
 		<p class="words" id="bartext"></p>
 		<div id="barchart">
 		</div>
