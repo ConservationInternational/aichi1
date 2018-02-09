@@ -81,17 +81,76 @@
 }
 
 #tschart{
-  margin-left: 5%;
+  margin-left: 75px;
   float: left;
 }
 
 #tsbuttons{
-  margin-left: 790px;
+  margin-left: 850px;
   width: 200px;
   display: block;
 }
 
-#mapselect{
+.ck-button {
+    margin:10px;
+    background-color:#EFEFEF;
+    border-radius:10px;
+    font-size: 20px;
+}
+
+.ck-button label {
+    width:150px;
+}
+
+#twitterbox {
+    color: #1A5EAB;
+}
+
+#trendsbox {
+    color: #e6673e;
+}
+
+#newsbox {
+    color: #5b5c62;
+}
+
+#overallbox {
+    color: #357d57;
+}
+
+.ck-button label span {
+    text-align:center;
+    padding:3px 0px;
+    display:block;
+}
+
+.ck-button label input {
+    display:none;
+}
+
+.ck-button input:checked + span {
+    padding:3px 0px;
+    border-radius: 10px;
+    color:#fff;
+}
+
+#twitterbox input:checked + span {
+    background-color: #1A5EAB;
+}
+
+#trendsbox input:checked + span {
+    background-color: #e6673e;
+}
+
+#newsbox input:checked + span {
+    background-color: #5b5c62;
+}
+
+#overallbox input:checked + span {
+    background-color: #357d57;
+}
+
+#mapselect  input:checked + span {
   margin: 0 auto;
   width: 700px;
 }

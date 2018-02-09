@@ -3,14 +3,14 @@ function setupTS(){
     .text("Time Series Graphs of Data Sources and Overall Indicator");
 
   var tstext = d3.select("#tstext")
-    .text("Select a county and data sources to see a time series graph with scores for each country.");
+    .text("Select a county and data sources to see a time series graph with scores for each data source in that country.");
 
   var countries = ["Afghanistan", "Åland Islands", "Albania", "Algeria", "American Samoa", "Andorra", "Angola", "Anguilla", "Antigua & Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia & Herzegovina", "Botswana", "Bouvet Island", "Brazil", "British Indian Ocean Territory", "British Virgin Islands", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island", "Cocos (Keeling) Islands", "Colombia", "Comoros", "Cook Islands", "Costa Rica", "Côte d’Ivoire", "Croatia", "Cuba", "Curaçao", "Cyprus", "Czechia", "Congo - Kinshasa", "Denmark", "Djibouti", "Dominican Republic", "Dominica", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands (Islas Malvinas)", "Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia", "French Southern Territories", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea-Bissau", "Guinea", "Guyana", "Haiti", "Heard Island & McDonald Islands", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macau", "Macedonia (FYROM)", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Martinique", "Mauritania", "Mauritius", "Mayotte", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco", "Mozambique", "Myanmar (Burma)", "Namibia", "Nauru", "Nepal", "Netherlands", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "North Korea", "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn", "Poland", "Portugal", "Puerto Rico", "Qatar", "Congo - Brazzaville", "Réunion", "Romania", "Russia", "Rwanda", "St. Barthélemy", "St. Martin", "St. Helena", "St. Kitts & Nevis", "St. Lucia", "St. Pierre & Miquelon", "St. Vincent & Grenadines", "Samoa", "San Marino", "São Tomé & Príncipe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Sint Maarten", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Georgia & South Sandwich Islands", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Svalbard & Jan Mayen", "Swaziland", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tokelau", "Tonga", "Trinidad & Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks & Caicos Islands", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States Minor Outlying Islands", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "U.S. Virgin Islands", "Wallis & Futuna", "Western Sahara", "Yemen", "Zambia", "Zimbabwe"]
 
   var tsselect = d3.select("#tsselect")
     .append('select')
     .attr('class', 'select')
-    .attr('id', 'tsselect')
+    .attr('id', 'countryselect')
     .on('change', onchange)
 
   var tsoptions = tsselect
@@ -20,10 +20,24 @@ function setupTS(){
     .text(function (d) {return d; });
 
   var newsradio = d3.select("#tsbuttons")
-    .html("<button id='newsbutton' class='tsbutton'> Online Newspapers </button><button id='twitterbutton' class='tsbutton'> Twitter </button><button id='trendsbutton' class='tsbutton'> Google Trends </button><button id='overallbutton' class='tsbutton'> Overall Indicator </button>")
+    .html('<form>   <div class="ck-button" id="twitterbox">     <label>     <input type="checkbox" id="ckbox" name="tsbox" value="twitter"><span>Twitter</span>     </label>   </div>   <div class="ck-button" id="newsbox">     <label>     <input type="checkbox" id="ckbox" name="tsbox" value="news"><span>Internet Newspapers</span>     </label>   </div>   <div class="ck-button" id="trendsbox">     <label>     <input type="checkbox" id="ckbox" name="tsbox" value="trends"><span>Google Trends</span>     </label>   </div>   <div class="ck-button" id="overallbox">     <label>     <input type="checkbox"  id="ckbox" name="tsbox" value="overall"><span>Overall Indicator</span>     </label>   </div> </form> ')
+    .on('change', buttonchange)
 
   function onchange(){
-    console.log('Þæs ofereode, þisses swa mæg')
+    var selectValue = d3.select("#countryselect").property('value');
+    updateTS(selectValue);
+  }
+
+  function buttonchange(){
+    var choices = []
+    d3.selectAll("#ckbox").each(function(d){
+      cb = d3.select(this);
+      if(cb.property("checked")){
+        choices.push(cb.property("value"));
+      }
+    });
+
+    console.log(choices);
   }
 
 }
@@ -381,14 +395,16 @@ function updateMap(color, selection, monthyear){
 };
 
 function updateTS(country) {
-  
+  d3.select("#tschart")
+    .html(""); 
+ 
   d3.csv('indicator.csv', function(error, tsdata){
     if (error) throw error;
 
   var parseDate = d3.time.format("%Y-%m");
 
   var tsdata = tsdata.filter(function(d){
-    return (d.country == country);
+    return (d.fullname == country);
   }).map(function(d) {
     d.pmonth = parseDate.parse(d.month);
     return d;

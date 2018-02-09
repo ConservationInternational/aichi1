@@ -32,7 +32,6 @@ $("#tsbutton").click(function() {
   $(this).one(transitionEvent, function(event){
     wipeall();
     setupTS();
-    updateTS("US");
   });
 });
 
