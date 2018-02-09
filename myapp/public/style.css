@@ -150,7 +150,7 @@
     background-color: #357d57;
 }
 
-#mapselect  input:checked + span {
+#mapselect {
   margin: 0 auto;
   width: 700px;
 }

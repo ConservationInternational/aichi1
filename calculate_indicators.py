@@ -86,5 +86,8 @@ NAsums = comb[['trends', 'twitter', 'news']].isnull().sum(axis=1)
 comb['overall'][NAsums == 2] = np.NaN
 
 comb = pd.merge(comb, countries, how='inner', on=['country'])
+
+comb = comb[comb.month != '2017-10']
+
 comb.to_csv('myapp/public/indicator.csv', index=False)
 
