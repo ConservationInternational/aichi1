@@ -94,66 +94,37 @@ function setupMap(){
     .text(function (d) { return d.label; })
     .attr('style', function(d) {return d.color});
 
-  function onchange() {
-    var monthLabel = d3.select('#monthselect').property('value');
-    var monthValue = timeValues[timeLabels.indexOf(monthLabel)]
+  //////////////////////
+  //Setup Map Here
+  //////////////////////
+  var w = 1000;
+  var h = 500;
 
-    var varValue = d3.select("#varselect").property('value');
-    
-    if(varValue == "Twitter Data"){
-      updateMap("#1A5EAB", "twitter", monthValue)
-    }
-    if(varValue == "Internet Newspaper Data"){
-      updateMap("#5b5c61", "news", monthValue)
-    }
-    if(varValue == "Google Trends Data"){
-      updateMap("#E6673e", "trends", monthValue)
-    }
-    if(varValue == "Overall Indicator"){
-      updateMap("#357d57", "overall", monthValue)
-    }
-  };
-};
+  var projection = d3.geo
+    .equirectangular()
+    .center([0,15])
+    .scale([w/(2*Math.PI)])
+    .translate([w/2, h/2]);
 
-function updateGraph(color, selection, id, n, monthyear) {
-  d3.select(id)
-    .html("");
+  var path = d3.geo.path()
+    .projection(projection);
 
-  d3.csv('indicator.csv', function(error, data){
-    if (error) throw err;
+  var graticule = d3.geo.graticule();
 
-  d3.select('#barchart').html("");
+  var mapsvg = d3.select("#map").append("svg")
+    .attr("width", w)
+    .attr("height", h); 
 
-  data = data.filter(function (d) {
-    return (d.month == monthyear);
-  }).map(function (d) {
-    return {
-      fullname: d.fullname,
-      variable: +d[selection],
-      geo: d.geo
-    };
-  });
-
-  var data = data.filter(function(d){
-    return (d.variable != 0);
-  });
- 
-  var data = data.sort(function(a, b){
-    if(a.variable > b.variable) return -1;
-    if(a.variable < b.variable) return 1;
-    return 0;
-  });
-
-  var data = data.slice(0, n);
+  ///////////////////////
+  //Setup Bar Graph here
+  /////////////////////
   
-  var countries = data.map(function(d){
-    return d.fullname;
-  });
-  
+  var countries = ["Afghanistan", "Åland Islands", "Albania", "Algeria", "American Samoa", "Andorra", "Angola", "Anguilla", "Antigua & Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia & Herzegovina", "Botswana", "Bouvet Island", "Brazil", "British Indian Ocean Territory", "British Virgin Islands", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island", "Cocos (Keeling) Islands", "Colombia", "Comoros", "Cook Islands", "Costa Rica", "Côte d’Ivoire", "Croatia", "Cuba", "Curaçao", "Cyprus", "Czechia", "Congo - Kinshasa", "Denmark", "Djibouti", "Dominican Republic", "Dominica", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands (Islas Malvinas)", "Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia", "French Southern Territories", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea-Bissau", "Guinea", "Guyana", "Haiti", "Heard Island & McDonald Islands", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macau", "Macedonia (FYROM)", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Martinique", "Mauritania", "Mauritius", "Mayotte", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco", "Mozambique", "Myanmar (Burma)", "Namibia", "Nauru", "Nepal", "Netherlands", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "North Korea", "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn", "Poland", "Portugal", "Puerto Rico", "Qatar", "Congo - Brazzaville", "Réunion", "Romania", "Russia", "Rwanda", "St. Barthélemy", "St. Martin", "St. Helena", "St. Kitts & Nevis", "St. Lucia", "St. Pierre & Miquelon", "St. Vincent & Grenadines", "Samoa", "San Marino", "São Tomé & Príncipe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Sint Maarten", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Georgia & South Sandwich Islands", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Svalbard & Jan Mayen", "Swaziland", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tokelau", "Tonga", "Trinidad & Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks & Caicos Islands", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States Minor Outlying Islands", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "U.S. Virgin Islands", "Wallis & Futuna", "Western Sahara", "Yemen", "Zambia", "Zimbabwe"]
+
   var width = 1000;
   var height = 12*countries.length;
 
-  var svg = d3.select(id)
+  var svg = d3.select('#barchart')
     .append('svg')
     .attr('width', width)
     .attr('height', height);
@@ -196,6 +167,227 @@ function updateGraph(color, selection, id, n, monthyear) {
     .classed("y axis", true)
     .call(yAxis);
 
+  var bars = chart.selectAll('rect.bar')
+    .append('rect')
+    .attr('class', 'bar')
+    .attr('width', 0)
+    .attr('fill', '#FFFFFF')
+
+  function onchange() {
+    var monthLabel = d3.select('#monthselect').property('value');
+    var monthyear = timeValues[timeLabels.indexOf(monthLabel)]
+
+    var varValue = d3.select("#varselect").property('value');
+    
+    if(varValue == "Twitter Data"){
+      var color = "#1a5eab";
+      var selection = "twitter";
+    }
+    if(varValue == "Internet Newspaper Data"){
+      var color = "#5b5c61";
+      var selection = "news";
+    }
+    if(varValue == "Google Trends Data"){
+      var color = "#E6673e";
+      var selection = "trends";
+    }
+    if(varValue == "Overall Indicator"){
+      var color = "#357d57";
+      var selection = "overall";
+    }
+
+    d3.csv('indicator.csv', function(error, data){
+      if (error) throw err;
+
+      data = data.filter(function (d) {
+        return (d.month == monthyear);
+      }).map(function (d) {
+        return {
+          fullname: d.fullname,
+          variable: +d[selection],
+          geo: d.geo
+        };
+      });
+      
+      ///////////////////
+      //Barchart Action
+      ////////////////////
+
+ 
+      //var data = data.filter(function(d){
+      //  return (d.variable != 0);
+      //});
+     
+      //var data = data.sort(function(a, b){
+      //  if(a.variable > b.variable) return -1;
+      //  if(a.variable < b.variable) return 1;
+      //  return 0;
+      //});
+    
+      var countries = data.map(function(d){
+        return d.fullname;
+      });
+    
+      var bars = chart.selectAll('rect.bar')
+        .data(data);
+
+      bars.enter()
+        .append('rect')
+        .attr('class', 'bar')
+        .attr('width', 0)
+        .attr('fill', color);
+      
+      bars.exit()
+        .remove();
+
+      var colorRange = generateColor(color, "#FFFFFF", 10);
+    
+      var tooltip = d3.select('#map')
+        .append("div")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("color", "black")
+        .style("font-weight", "bold")
+        .style("background-color", "white")
+        .style("border", "1px solid #000000")
+        .style("border-radius", "15px")
+        .style("padding-right", "10px")
+        .style("padding-left", "10px")
+        .style("visibility", "hidden");
+    
+      bars.attr('x', 0)
+       .on("mouseover", function(d){
+          d3.select(this)
+            .style("fill", colorRange[5]);
+          tooltip
+            .style("visibility", "visible")
+            .text((d.fullname + ': ' +  Math.round(d.variable*10)/10).replace(/: 0$/, ": No Data"))
+        })
+        .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+        .on("mouseout", function(d){
+          d3.select(this)
+            .style("fill", color);
+          tooltip
+            .style("visibility", "hidden");
+        })
+        .transition()
+        .attr('y', function(d) {
+          return y(d.fullname);
+        })
+        .attr('height', y.rangeBand())
+        .attr('width', function(d) {
+          if (d.variable == 'NaN'){
+            d.variable = 0;
+          }
+          return x(d.variable);
+        })
+        .attr('fill', color)    
+ 
+
+      //////////////////////
+      //Map Action
+      ////////////////////
+      var mapdat = data.map(function(d){
+        var geoJson = JSON.parse(d.geo);
+        geoJson['properties']['variable'] = +d.variable;
+        geoJson['properties']['fullname'] = d.fullname;
+        return geoJson;
+      });
+    
+      mapdat = {'type': 'FeatureCollection',
+                'features': mapdat};
+    
+      var values = mapdat.features.map(function(d) {
+        return d.properties.variable;
+      });
+    
+      var colorRange = generateColor(color, "#FFFFFF", 10);
+    
+      colorFunc = d3.scale.quantile()
+        .domain(values)
+        .range(colorRange);
+      
+      var land = mapsvg.selectAll(".land")
+        .data(mapdat.features)
+        .enter()
+
+      land.append('path')
+        .attr('class', 'land')
+        .attr('d', path)
+        .attr("fill", function(d){
+          var out = colorFunc(d.properties.variable);
+          //Not sure why this is necessary but it seems to be so
+          if (d.properties.variable == 0) {
+            out = "#FFFFFF";
+          };
+          return out;
+        })
+        .on("mouseover", function(d){
+          d3.select(this)
+            .style("stroke-width", 2);
+          tooltip
+            .style("visibility", "visible")
+            .text((d.properties.fullname + ': ' +  Math.round(d.properties.variable*10)/10).replace(/: 0$/, ": No Data"))
+        })
+        .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+        .on("mouseout", function(d){
+          d3.select(this)
+            .style("stroke-width", 0.5);
+          tooltip
+            .style("visibility", "hidden");
+        })
+    
+      var ls_w = 90, ls_h = 20;
+    
+      qrange = function(func) {
+        var a = [0];
+        for (var i=0; i<100; i++) {
+          if (func(i) != func(i + 1)){
+            a.push(i + 1);
+          }
+        }
+        return a;
+      }
+    
+      var breaks = qrange(colorFunc);
+    
+      mapsvg.selectAll("legend").html("");
+
+      var legend = mapsvg.selectAll("legend")
+        .data(breaks)
+        .enter().append("g")
+        .attr("class", "legend");
+    
+      var start = (w - ls_w*breaks.length + ls_w)/2
+    
+      legend.append("rect")
+        .attr("y", 480)
+        .attr("x", function(d, i){ return w - (i*ls_w) - start;})
+        .attr("width", ls_w)
+        .attr("height", ls_h)
+        .style("fill", function(d, i) { return colorFunc(d); })
+    
+      var maxval = d3.max(mapdat.features, function(d){
+        return Math.round(d.properties.variable);
+      });
+    
+      breaks.push(maxval);
+    
+      mapsvg.selectAll(".legend-label")
+        .html('')
+        .data(breaks)
+        .enter().append("text")
+        .attr('class', "legend-label")
+        .attr("y", 477)
+        .attr("x", function(d, i) { return w - (i*ls_w) + ls_w - start - 5; })
+        .text(function(d) { return d; });
+    });
+  };
+};
+
+/*
+function updateGraph(color, selection, monthyear) {
+  d3.csv(  /*
   var colorRange = generateColor(color, "#FFFFFF", 10);
 
   var tooltip = d3.select('#map')
@@ -211,23 +403,11 @@ function updateGraph(color, selection, id, n, monthyear) {
     .style("padding-left", "10px")
     .style("visibility", "hidden");
  
-  var bars = chart.selectAll('rect.bar')
-    .data(data);
- 
-  bars.enter()
-    .append('rect')
-    .attr('class', 'bar')
-    .attr('width', 0)
-    .attr('fill', color);
   
-  bars.exit()
-    .remove();
-  
-  bars.attr('x', 0)
-    .attr('y', function(d) {
-      return y(d.fullname);
-    })
-    .attr('height', y.rangeBand())
+
+
+
+
     .on("mouseover", function(d){
       d3.select(this)
         .style("fill", colorRange[5]);
@@ -242,13 +422,9 @@ function updateGraph(color, selection, id, n, monthyear) {
       tooltip
         .style("visibility", "hidden");
     })
-    .transition()
-    .attr('width', function(d) {
-      return x(d.variable);
-    })
 });
 }
-
+*/
 function updateMap(color, selection, monthyear){
   d3.select("#map").
     html("");
@@ -280,25 +456,7 @@ function updateMap(color, selection, monthyear){
   mapdat = {'type': 'FeatureCollection',
             'features': mapdat};
 
-  var w = 1000;
-  var h = 500;
-
-  var projection = d3.geo
-    .equirectangular()
-    .center([0,15])
-    .scale([w/(2*Math.PI)])
-    .translate([w/2, h/2]);
-
-  var path = d3.geo.path()
-    .projection(projection);
-
-  var graticule = d3.geo.graticule();
-
-  var svg = d3.select("#map").append("svg")
-    .attr("width", w)
-    .attr("height", h);
-
-  var values = mapdat.features.map(function(d) {
+ var values = mapdat.features.map(function(d) {
     return d.properties.variable;
   });
 
