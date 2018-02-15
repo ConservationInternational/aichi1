@@ -191,12 +191,12 @@ function setupMap(){
     .orient("left");
   
   chart.append("g")
-    .classed("x axis", true)
+    .attr('class', 'xaxis')
     .call(xAxis);
   
   chart.append("g")
+    .attr('class', 'yaxis')
     .style("font", "12px times")
-    .classed("y axis", true)
     .call(yAxis);
 
   function onchange() {
@@ -205,6 +205,10 @@ function setupMap(){
 
     var varValue = d3.select("#varselect").property('value');
 
+    if (monthLabel == 'Select a Month' | varValue == 'Select a Data Source'){
+      return;
+    }
+    
     if(varValue == "Twitter Data"){
       var color = "#1a5eab";
       var selection = "twitter";
@@ -244,12 +248,32 @@ function setupMap(){
         return (d.variable != 0);
       });
      
-      //var bardata = bardata.sort(function(a, b){
-      //  if(a.variable > b.variable) return -1;
-      //  if(a.variable < b.variable) return 1;
-      //  return 0;
-      //});
+      var bardata = bardata.sort(function(a, b){
+        if(a.variable > b.variable) return -1;
+        if(a.variable < b.variable) return 1;
+        return 0;
+      });
    
+      var newcountries = bardata.map(function(d){
+        return d.fullname;
+      });
+
+      var height = 18*newcountries.length;
+      var graphHeight = height - margins.top - margins.bottom;
+  
+      var y = d3.scale.ordinal()
+        .domain(newcountries)
+        .rangeBands([0, graphHeight], 0.1, 0.1);
+
+      var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left");
+
+      chart.select(".yaxis")
+        .transition()
+        .duration(1500)
+        .call(yAxis);
+
       var bars = chart.selectAll('rect.bar')
         .data(bardata);
 
@@ -259,8 +283,8 @@ function setupMap(){
         .attr('width', 0)
         .attr('fill', color);
       
-      bars.exit()
-        .remove();
+      //bars.exit()
+      //  .remove();
 
       var colorRange = generateColor(color, "#FFFFFF", 10);
     
@@ -277,8 +301,8 @@ function setupMap(){
         .style("padding-left", "10px")
         .style("visibility", "hidden");
     
-      bars.attr('x', 0)
-       .on("mouseover", function(d){
+      bars
+        .on("mouseover", function(d){
           d3.select(this)
             .style("fill", colorRange[5]);
           tooltip
@@ -293,6 +317,7 @@ function setupMap(){
             .style("visibility", "hidden");
         })
         .transition()
+        .duration(1500)
         .attr('y', function(d) {
           return y(d.fullname);
         })
