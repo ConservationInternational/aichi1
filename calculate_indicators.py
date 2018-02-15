@@ -7,8 +7,7 @@ import datetime
 #os.chdir('D://Documents and Settings/mcooper/GitHub/aichi1/')
 os.chdir('/home/ec2-user/aichi1/')
 
-countries = pd.read_csv('countries_med.csv', na_filter=False)
-countries.columns = ['country', 'geo', 'fullname']
+countries = pd.read_csv('countrynames.csv', na_filter=False)
 
 #Connect to MongoDB
 client = MongoClient('localhost', 27017)
@@ -84,8 +83,6 @@ comb[comb==0] = np.NaN
 comb['overall'] = comb[['trends', 'twitter', 'news']].mean(axis=1)
 NAsums = comb[['trends', 'twitter', 'news']].isnull().sum(axis=1)
 comb['overall'][NAsums == 2] = np.NaN
-
-comb = pd.merge(comb, countries, how='inner', on=['country'])
 
 comb = comb[comb.month != '2017-10']
 
