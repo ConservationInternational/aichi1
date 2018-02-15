@@ -97,6 +97,25 @@ function setupMap(){
   //////////////////////
   //Setup Map Here
   //////////////////////
+  var geodata = d3.select('#countriesgeo').html().trim();
+  geodata = d3.csv.parse(geodata, function (d) {
+    return {
+      fullname: d.fullname,
+      country: d.country,
+      geo: d.geo,
+    };
+  });
+
+  var mapdat = geodata.map(function(d){
+    var geoJson = JSON.parse(d.geo);
+    geoJson['properties']['country'] = d.country;
+    geoJson['properties']['fullname'] = d.fullname;
+    return geoJson;
+  });
+
+  mapdat = {'type': 'FeatureCollection',
+            'features': mapdat}
+
   var w = 1000;
   var h = 500;
 
@@ -113,16 +132,29 @@ function setupMap(){
 
   var mapsvg = d3.select("#map").append("svg")
     .attr("width", w)
-    .attr("height", h); 
+    .attr("height", h);
+
+  mapsvg.selectAll(".land")
+    .data(mapdat.features)
+    .enter().append('path')
+    .attr('id', function(d){
+      return d.properties['alpha-2'];
+    })
+    .attr('class', 'land')
+    .attr('d', path)
+    .attr('fill', '#FFFFFF');
+
 
   ///////////////////////
   //Setup Bar Graph here
   /////////////////////
   
-  var countries = ["Afghanistan", "Åland Islands", "Albania", "Algeria", "American Samoa", "Andorra", "Angola", "Anguilla", "Antigua & Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia & Herzegovina", "Botswana", "Bouvet Island", "Brazil", "British Indian Ocean Territory", "British Virgin Islands", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island", "Cocos (Keeling) Islands", "Colombia", "Comoros", "Cook Islands", "Costa Rica", "Côte d’Ivoire", "Croatia", "Cuba", "Curaçao", "Cyprus", "Czechia", "Congo - Kinshasa", "Denmark", "Djibouti", "Dominican Republic", "Dominica", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands (Islas Malvinas)", "Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia", "French Southern Territories", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea-Bissau", "Guinea", "Guyana", "Haiti", "Heard Island & McDonald Islands", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macau", "Macedonia (FYROM)", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Martinique", "Mauritania", "Mauritius", "Mayotte", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco", "Mozambique", "Myanmar (Burma)", "Namibia", "Nauru", "Nepal", "Netherlands", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "North Korea", "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn", "Poland", "Portugal", "Puerto Rico", "Qatar", "Congo - Brazzaville", "Réunion", "Romania", "Russia", "Rwanda", "St. Barthélemy", "St. Martin", "St. Helena", "St. Kitts & Nevis", "St. Lucia", "St. Pierre & Miquelon", "St. Vincent & Grenadines", "Samoa", "San Marino", "São Tomé & Príncipe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Sint Maarten", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Georgia & South Sandwich Islands", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Svalbard & Jan Mayen", "Swaziland", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tokelau", "Tonga", "Trinidad & Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks & Caicos Islands", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States Minor Outlying Islands", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "U.S. Virgin Islands", "Wallis & Futuna", "Western Sahara", "Yemen", "Zambia", "Zimbabwe"]
+  var countries = geodata.map(function(d){
+    return(d.fullname);
+  });
 
   var width = 1000;
-  var height = 12*countries.length;
+  var height = 18*countries.length;
 
   var svg = d3.select('#barchart')
     .append('svg')
@@ -163,22 +195,16 @@ function setupMap(){
     .call(xAxis);
   
   chart.append("g")
-    .style("font", "9px times")
+    .style("font", "12px times")
     .classed("y axis", true)
     .call(yAxis);
-
-  var bars = chart.selectAll('rect.bar')
-    .append('rect')
-    .attr('class', 'bar')
-    .attr('width', 0)
-    .attr('fill', '#FFFFFF')
 
   function onchange() {
     var monthLabel = d3.select('#monthselect').property('value');
     var monthyear = timeValues[timeLabels.indexOf(monthLabel)]
 
     var varValue = d3.select("#varselect").property('value');
-    
+
     if(varValue == "Twitter Data"){
       var color = "#1a5eab";
       var selection = "twitter";
@@ -203,33 +229,29 @@ function setupMap(){
         return (d.month == monthyear);
       }).map(function (d) {
         return {
+          country: d.country,
           fullname: d.fullname,
           variable: +d[selection],
-          geo: d.geo
         };
       });
-      
+
       ///////////////////
       //Barchart Action
       ////////////////////
 
  
-      //var data = data.filter(function(d){
-      //  return (d.variable != 0);
-      //});
+      var bardata = data.filter(function(d){
+        return (d.variable != 0);
+      });
      
-      //var data = data.sort(function(a, b){
+      //var bardata = bardata.sort(function(a, b){
       //  if(a.variable > b.variable) return -1;
       //  if(a.variable < b.variable) return 1;
       //  return 0;
       //});
-    
-      var countries = data.map(function(d){
-        return d.fullname;
-      });
-    
+   
       var bars = chart.selectAll('rect.bar')
-        .data(data);
+        .data(bardata);
 
       bars.enter()
         .append('rect')
@@ -287,37 +309,28 @@ function setupMap(){
       //////////////////////
       //Map Action
       ////////////////////
-      var mapdat = data.map(function(d){
-        var geoJson = JSON.parse(d.geo);
-        geoJson['properties']['variable'] = +d.variable;
-        geoJson['properties']['fullname'] = d.fullname;
-        return geoJson;
+    
+      var values = data.map(function(d) {
+        return d.variable;
       });
-    
-      mapdat = {'type': 'FeatureCollection',
-                'features': mapdat};
-    
-      var values = mapdat.features.map(function(d) {
-        return d.properties.variable;
-      });
-    
+
       var colorRange = generateColor(color, "#FFFFFF", 10);
     
       colorFunc = d3.scale.quantile()
         .domain(values)
         .range(colorRange);
-      
-      var land = mapsvg.selectAll(".land")
-        .data(mapdat.features)
-        .enter()
 
-      land.append('path')
-        .attr('class', 'land')
-        .attr('d', path)
+      mapsvg.selectAll('.land')
+        .each(function(d){
+          var country = data.filter(function(c){
+            return c.country == d.properties['alpha-2']
+          })
+          d.variable = country[0].variable;
+        })
         .attr("fill", function(d){
-          var out = colorFunc(d.properties.variable);
+          var out = colorFunc(d.variable);
           //Not sure why this is necessary but it seems to be so
-          if (d.properties.variable == 0) {
+          if (d.variable == 0) {
             out = "#FFFFFF";
           };
           return out;
@@ -327,7 +340,7 @@ function setupMap(){
             .style("stroke-width", 2);
           tooltip
             .style("visibility", "visible")
-            .text((d.properties.fullname + ': ' +  Math.round(d.properties.variable*10)/10).replace(/: 0$/, ": No Data"))
+            .text((d.properties.fullname + ': ' +  Math.round(d.variable*10)/10).replace(/: 0$/, ": No Data"))
         })
         .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
         .on("mouseout", function(d){
@@ -351,7 +364,9 @@ function setupMap(){
     
       var breaks = qrange(colorFunc);
     
-      mapsvg.selectAll("legend").html("");
+      d3.selectAll(".legend").remove();
+
+      d3.selectAll(".legend-label").remove();
 
       var legend = mapsvg.selectAll("legend")
         .data(breaks)
@@ -368,7 +383,7 @@ function setupMap(){
         .style("fill", function(d, i) { return colorFunc(d); })
     
       var maxval = d3.max(mapdat.features, function(d){
-        return Math.round(d.properties.variable);
+        return Math.round(d.variable);
       });
     
       breaks.push(maxval);
