@@ -199,6 +199,18 @@ function setupMap(){
     .style("font", "12px times")
     .call(yAxis);
 
+  var bars = chart.selectAll('rect.bar')
+    .data(geodata.map(function(d){
+       return {
+         fullname: d.fullname,
+         country: d.country,
+       };
+     }))
+    .enter()
+    .append('rect')
+    .attr('width', 0)
+    .attr('fill', '#FFFFFF');
+
   function onchange() {
     var monthLabel = d3.select('#monthselect').property('value');
     var monthyear = timeValues[timeLabels.indexOf(monthLabel)]
@@ -244,9 +256,9 @@ function setupMap(){
       ////////////////////
 
  
-      var bardata = data.filter(function(d){
-        return (d.variable != 0);
-      });
+      var bardata = data;//.filter(function(d){
+      //  return (d.variable != 0);
+      //});
      
       var bardata = bardata.sort(function(a, b){
         if(a.variable > b.variable) return -1;
@@ -257,6 +269,7 @@ function setupMap(){
       var newcountries = bardata.map(function(d){
         return d.fullname;
       });
+
 
       var height = 18*newcountries.length;
       var graphHeight = height - margins.top - margins.bottom;
@@ -274,18 +287,16 @@ function setupMap(){
         .duration(1500)
         .call(yAxis);
 
-      var bars = chart.selectAll('rect.bar')
-        .data(bardata);
-
-      bars.enter()
-        .append('rect')
+      bars.each(function(d){
+           var variable = bardata.filter(function(cc){
+             return cc.country == d.country;
+           })
+           d.variable = variable[0].variable;
+        })
         .attr('class', 'bar')
-        .attr('width', 0)
-        .attr('fill', color);
-      
-      //bars.exit()
-      //  .remove();
-
+     
+      console.log(bars.data());
+ 
       var colorRange = generateColor(color, "#FFFFFF", 10);
     
       var tooltip = d3.select('#map')
