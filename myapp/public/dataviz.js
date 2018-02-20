@@ -5,7 +5,12 @@ function setupTS(){
   var tstext = d3.select("#tstext")
     .text("Select a county and data sources to see a time series graph with scores for each data source in that country.");
 
-  var countries = ["Select a Country", "Afghanistan", "Åland Islands", "Albania", "Algeria", "American Samoa", "Andorra", "Angola", "Anguilla", "Antigua & Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia & Herzegovina", "Botswana", "Bouvet Island", "Brazil", "British Indian Ocean Territory", "British Virgin Islands", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island", "Cocos (Keeling) Islands", "Colombia", "Comoros", "Cook Islands", "Costa Rica", "Côte d’Ivoire", "Croatia", "Cuba", "Curaçao", "Cyprus", "Czechia", "Congo - Kinshasa", "Denmark", "Djibouti", "Dominican Republic", "Dominica", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands (Islas Malvinas)", "Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia", "French Southern Territories", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea-Bissau", "Guinea", "Guyana", "Haiti", "Heard Island & McDonald Islands", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macau", "Macedonia (FYROM)", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Martinique", "Mauritania", "Mauritius", "Mayotte", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco", "Mozambique", "Myanmar (Burma)", "Namibia", "Nauru", "Nepal", "Netherlands", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "North Korea", "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn", "Poland", "Portugal", "Puerto Rico", "Qatar", "Congo - Brazzaville", "Réunion", "Romania", "Russia", "Rwanda", "St. Barthélemy", "St. Martin", "St. Helena", "St. Kitts & Nevis", "St. Lucia", "St. Pierre & Miquelon", "St. Vincent & Grenadines", "Samoa", "San Marino", "São Tomé & Príncipe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Sint Maarten", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Georgia & South Sandwich Islands", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Svalbard & Jan Mayen", "Swaziland", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tokelau", "Tonga", "Trinidad & Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks & Caicos Islands", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States Minor Outlying Islands", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "U.S. Virgin Islands", "Wallis & Futuna", "Western Sahara", "Yemen", "Zambia", "Zimbabwe"]
+  var countries = d3.select('#countriesgeo').html().trim();
+  countries = d3.csv.parse(countries, function (d) {
+    return d.fullname;
+  });
+
+  countries.unshift("Select a Country");
 
   var tsselect = d3.select("#tsselect")
     .append('select')
@@ -21,26 +26,341 @@ function setupTS(){
 
   var newsradio = d3.select("#tsbuttons")
     .html('<form>   <div class="ck-button" id="twitterbox">     <label>     <input type="checkbox" id="ckbox" name="tsbox" value="twitter"><span>Twitter</span>     </label>   </div>   <div class="ck-button" id="newsbox">     <label>     <input type="checkbox" id="ckbox" name="tsbox" value="news"><span>Internet Newspapers</span>     </label>   </div>   <div class="ck-button" id="trendsbox">     <label>     <input type="checkbox" id="ckbox" name="tsbox" value="trends"><span>Google Trends</span>     </label>   </div>   <div class="ck-button" id="overallbox">     <label>     <input type="checkbox"  id="ckbox" name="tsbox" value="overall"><span>Overall Indicator</span>     </label>   </div> </form> ')
-    .on('change', buttonchange)
+    .on('change', onchange)
 
-  var choices = [];
+  //Get the month
+  var dateStart = moment('2017-11-01');
+  var dateEnd = moment();
+  var timeValues = [''];
+  var timeLabels = ['Select a Month'];
 
-  function onchange(){
-    selectCountry = d3.select("#countryselect").property('value');
-    updateTS(selectCountry, choices);
+  while (dateEnd > dateStart  || dateStart.format('M') === dateEnd.format("M")){
+    timeValues.push(dateStart.format('YYYY-M'));
+    timeLabels.push(dateStart.format('MMMM YYYY'));
+    dateStart.add(1, 'month');
   }
 
-  function buttonchange(){
-    choices = [];
+  var margin = {top: 50, right: 8, bottom: 80, left: 80},
+      width = 800 - margin.left - margin.right,
+      height = 618 - margin.top - margin.bottom;
+
+  var x = d3.time.scale()
+    .range([0, width]);
+
+  var y = d3.scale.linear()
+    .range([height, 0]);
+
+  var xAxis = d3.svg.axis()
+    .scale(x)
+    .tickFormat(d3.time.format("%b %Y"))
+	//makes the xAxis ticks a little longer than the xMinorAxis ticks
+    .tickSize(10)
+    .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+  y.domain([0, 5]);
+
+  var svg = d3.select("#tschart")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  x.domain([moment('2017-10-20'), moment().startOf('month').add(10, 'days')]);
+  
+  var dif = moment().startOf('month').add(10, 'days').diff(moment('2017-10-20'), 'months', true)
+
+  svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis.ticks(dif))
+    .selectAll(".tick text")
+    .call(wrap, 35);
+
+  svg.append("text")      // text label for the x-axis
+    .attr("x", width / 2 )
+    .attr("y",  height + margin.bottom)
+    .style("text-anchor", "middle")
+    .text("Month");
+
+  svg.append("text")      // text label for the y-axis
+    .attr("y",30 - margin.left)
+    .attr("x",50 - (height / 2))
+    .attr("transform", "rotate(-90)")
+    .style("text-anchor", "end")
+    .style("font-size", "16px")
+    .text("Score");
+
+  svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis)
+
+  timeValues.shift();
+
+  data = timeValues.map(function(d){
+    return {
+      pmonth: moment(d, 'YYYY-M'),
+      twitter: +0,
+      trends: +0,
+      news: +0,
+      overall: +0,
+    };
+  });
+
+  var circles = svg.selectAll()
+    .data(data).enter().append('circle');
+
+  var paths = svg.selectAll()
+    .data(data).enter().append('path');
+
+  //Setup Twitter
+  var twline = d3.svg.line()
+    .x(function(d) { return console.log(x(d.pmonth)); x(d.pmonth); })
+    .y(function(d) { return console.log(y(d.twitter)); y(d.twitter); })
+  
+  paths
+    .attr("stroke", "transparent")
+    .attr('fill', "transparent")
+    .attr('stroke-width', 3)
+    .attr("class", "line")
+    .attr("d", twline);
+
+  circles
+    .attr("fill", "transparent")
+    .attr("r", 4)
+    .attr("cx", function(d) { return x(d.pmonth); })
+    .attr("cy", function(d) { return y(d.twitter); })
+ 
+  //Setup Trends
+  var trline = d3.svg.line()
+    .x(function(d) { return x(d.pmonth); })
+    .y(function(d) { return y(d.trends); })
+
+  paths
+    .attr("stroke", "transparent")
+    .attr('fill', "transparent")
+    .attr('stroke-width', 3)
+    .attr("class", "line")
+    .attr("d", trline);
+
+  circles
+    .attr("fill", "transparent")
+    .attr("r", 4)
+    .attr("cx", function(d) { return x(d.pmonth); })
+    .attr("cy", function(d) { return y(d.trends); })
+
+  //News
+  var nline = d3.svg.line()
+    .x(function(d) { return x(d.pmonth); })
+    .y(function(d) { return y(d.news); })
+
+  paths
+    .attr("stroke", "transparent")
+    .attr('fill', "transparent")
+    .attr('stroke-width', 3)
+    .attr("class", "line")
+    .attr("d", nline);
+
+  circles
+    .attr("fill", "transparent")
+    .attr("r", 4)
+    .attr("cx", function(d) { return x(d.pmonth); })
+    .attr("cy", function(d) { return y(d.news); })
+
+  //Overall
+  var oline = d3.svg.line()
+    .x(function(d) { return x(d.pmonth); })
+    .y(function(d) { return y(d.overall); })
+
+  paths
+    .attr("stroke", "transparent")
+    .attr('fill', "transparent")
+    .attr('stroke-width', 6)
+    .attr("class", "line")
+    .attr("d", oline);
+
+  circles
+    .attr("fill", "transparent")
+    .attr("r", 5)
+    .attr("cx", function(d) { return x(d.pmonth); })
+    .attr("cy", function(d) { return y(d.overall); })
+ 
+  function onchange(){
+    var selectCountry = d3.select("#countryselect").property('value');
+
+    var choices = [];
     d3.selectAll("#ckbox").each(function(d){
       cb = d3.select(this);
       if(cb.property("checked")){
         choices.push(cb.property("value"));
       }
     });
-    updateTS(selectCountry, choices);
+
+   d3.csv('indicator.csv', function(error, tsdata){
+      if (error) throw error;
+
+      var tsdata = tsdata.filter(function(d){
+        return (d.fullname == selectCountry);
+      }).map(function(d) {
+        d.pmonth = moment(d.month, 'YYYY-M');
+        return d;
+      }).sort(function(a, b){
+        if(a.pmonth > b.pmonth) return -1;
+        if(a.pmonth < b.pmonth) return 1;
+        return 0;
+      });
+
+      var values = []
+
+      for (var i = 0; i < choices.length; i++) {
+        values = values.concat(tsdata.map(function(d) { return +d[choices[i]]; }));
+      };
+
+      if (selectCountry == 'Select a Country' | choices.length == 0){
+        y.domain([0, 5])
+        svg.select(".y")
+          .transition()
+          .duration(1500)
+          .call(yAxis);
+        return;
+      }
+
+      var max = values.reduce(function(a, b) {
+        return Math.max(a, b);
+      });
+
+      y.domain([0, max]);
+
+      // Draw the y Grid lines
+      svg.select(".y")
+        .transition()
+        .duration(1500)
+        .call(yAxis);  
+
+      if (choices.indexOf('twitter') > -1){
+        var twline = d3.svg.line()
+          .x(function(d) { return x(d.pmonth); })
+          .y(function(d) { return y(d.twitter); })
+
+        /*paths.selectAll("path")
+          .transition()
+          .duration(1500)
+          .attr("stroke", "#1A5EAB")
+          .attr('fill', "transparent")
+          .attr('stroke-width', 3)
+          .attr("class", "line")
+          .attr("d", twline);
+*/
+        circles.selectAll("circle")
+          .transition()
+          .duration(1500)
+          .attr("fill", "#1A5EAB")
+          .attr("r", 4)
+          .attr("cx", function(d) { return x(d.pmonth); })
+          .attr("cy", function(d) { return y(d.twitter); })
+      };
+
+    
+      if (choices.indexOf('trends') > -1){
+         var trline = d3.svg.line()
+          .x(function(d) { return x(d.pmonth); })
+          .y(function(d) { return y(d.trends); })
+    
+        paths.selectAll("path")
+          .transition()
+          .duration(1500)
+          .attr("stroke", "#E6673e")
+          .attr('fill', "transparent")
+          .attr('stroke-width', 3)
+          .attr("class", "line")
+          .attr("d", trline);
+    
+        circles.selectAll("circle")
+          .transition()
+          .duration(1500)
+          .attr("fill", "#E6673e")
+          .attr("r", 4)
+          .attr("cx", function(d) { return x(d.pmonth); })
+          .attr("cy", function(d) { return y(d.trends); })
+     
+      };
+    
+      if (choices.indexOf('news') > -1){
+        var nline = d3.svg.line()
+          .x(function(d) { return x(d.pmonth); })
+          .y(function(d) { return y(d.news); })
+    
+        paths.selectAll("path")
+          .transition()
+          .duration(1500)
+          .attr("stroke", "#5b5c61")
+          .attr('fill', "transparent")
+          .attr('stroke-width', 3)
+          .attr("class", "line")
+          .attr("d", nline);
+    
+        circles.selectAll("circle")
+          .transition()
+          .duration(1500)
+          .attr("fill", "#5b5c61")
+          .attr("r", 4)
+          .attr("cx", function(d) { return x(d.pmonth); })
+          .attr("cy", function(d) { return y(d.news); })
+      };
+    
+      if (choices.indexOf('overall') > -1){
+        var oline = d3.svg.line()
+          .x(function(d) { return x(d.pmonth); })
+          .y(function(d) { return y(d.overall); })
+    
+        paths.selectAll("path")
+          .transition()
+          .duration(1500)
+          .attr("stroke", "#356d57")
+          .attr('fill', "transparent")
+          .attr('stroke-width', 6)
+          .attr("class", "line")
+          .attr("d", oline);
+    
+        circles.selectAll("circle")
+          .transition()
+          .duration(1500)
+          .attr("fill", "#357d57")
+          .attr("r", 5)
+          .attr("cx", function(d) { return x(d.pmonth); })
+          .attr("cy", function(d) { return y(d.overall); })
+      };
+    });  
   };
 };
+
+function wrap(text, width) {
+  text.each(function() {
+    var text = d3.select(this),
+        words = text.text().split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 1.1, // ems
+        y = text.attr("y"),
+        dy = parseFloat(text.attr("dy")),
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+    while (word = words.pop()) {
+      line.push(word);
+      tspan.text(line.join(" "));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+      }
+    }
+  });
+}
 
 function setupMap(){ 
   //Update text for header and 
@@ -209,6 +529,12 @@ function setupMap(){
     .enter()
     .append('rect')
     .attr('width', 0)
+    .attr('id', function(d){
+      return d.country;
+    })
+    .attr('y', function(d){
+      return y(d.fullname);
+    })
     .attr('fill', '#FFFFFF');
 
   function onchange() {
@@ -295,8 +621,6 @@ function setupMap(){
         })
         .attr('class', 'bar')
      
-      console.log(bars.data());
- 
       var colorRange = generateColor(color, "#FFFFFF", 10);
     
       var tooltip = d3.select('#map')
@@ -436,382 +760,4 @@ function setupMap(){
   };
 };
 
-/*
-function updateGraph(color, selection, monthyear) {
-  d3.csv(  /*
-  var colorRange = generateColor(color, "#FFFFFF", 10);
 
-  var tooltip = d3.select('#map')
-    .append("div")
-    .style("position", "absolute")
-    .style("z-index", "10")
-    .style("color", "black")
-    .style("font-weight", "bold")
-    .style("background-color", "white")
-    .style("border", "1px solid #000000")
-    .style("border-radius", "15px")
-    .style("padding-right", "10px")
-    .style("padding-left", "10px")
-    .style("visibility", "hidden");
- 
-  
-
-
-
-
-    .on("mouseover", function(d){
-      d3.select(this)
-        .style("fill", colorRange[5]);
-      tooltip
-        .style("visibility", "visible")
-        .text((d.fullname + ': ' +  Math.round(d.variable*10)/10).replace(/: 0$/, ": No Data"))
-    })
-    .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-    .on("mouseout", function(d){
-      d3.select(this)
-        .style("fill", color);
-      tooltip
-        .style("visibility", "hidden");
-    })
-});
-}
-*/
-function updateMap(color, selection, monthyear){
-  d3.select("#map").
-    html("");
-  d3.select("#barchart").
-    html("");
-
-  d3.csv('indicator.csv', function(error, data){
-    if (error) throw error;
-
-  d3.select("#map").html("");
-
-  var sel = data.filter(function(d){
-    return(d.month == monthyear);
-  }).map(function (d) {
-    return {
-      fullname: d.fullname,
-      variable: +d[selection],
-      geo: d.geo
-    };
-  });
-
-  var mapdat = sel.map(function(d){
-    var geoJson = JSON.parse(d.geo);
-    geoJson['properties']['variable'] = +d.variable;
-    geoJson['properties']['fullname'] = d.fullname;
-    return geoJson;
-  });
-
-  mapdat = {'type': 'FeatureCollection',
-            'features': mapdat};
-
- var values = mapdat.features.map(function(d) {
-    return d.properties.variable;
-  });
-
-  var colorRange = generateColor(color, "#FFFFFF", 10);
-
-  colorFunc = d3.scale.quantile()
-    .domain(values)
-    .range(colorRange);
-  
-  var tooltip = d3.select('#map')
-    .append("div")
-    .style("position", "absolute")
-    .style("z-index", "10")
-    .style("color", "black")
-    .style("font-weight", "bold")
-    .style("background-color", "white")
-    .style("border", "1px solid #000000")
-    .style("border-radius", "15px")
-    .style("padding-right", "10px")
-    .style("padding-left", "10px")
-    .style("visibility", "hidden");
- 
-  svg.selectAll(".land")
-    .data(mapdat.features)
-    .enter().append('path')
-    .attr('class', 'land')
-    .attr('d', path)
-    .attr("fill", function(d){
-      var out = colorFunc(d.properties.variable);
-      //Not sure why this is necessary but it seems to be so
-      if (d.properties.variable == 0) {
-        out = "#FFFFFF";
-      };
-      return out;
-    })
-    .on("mouseover", function(d){
-      d3.select(this)
-        .style("stroke-width", 2);
-      tooltip
-        .style("visibility", "visible")
-        .text((d.properties.fullname + ': ' +  Math.round(d.properties.variable*10)/10).replace(/: 0$/, ": No Data"))
-    })
-    .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-    .on("mouseout", function(d){
-      d3.select(this)
-        .style("stroke-width", 0.5);
-      tooltip
-        .style("visibility", "hidden");
-    })
-
-  var ls_w = 90, ls_h = 20;
-
-  qrange = function(func) {
-    var a = [0];
-    for (var i=0; i<100; i++) {
-      if (func(i) != func(i + 1)){
-        a.push(i + 1);
-      }
-    }
-    return a;
-  }
-
-  var breaks = qrange(colorFunc);
-
-  var legend = svg.selectAll("legend")
-    .data(breaks)
-    .enter().append("g")
-    .attr("class", "legend");
-
-  var start = (w - ls_w*breaks.length + ls_w)/2
-
-  legend.append("rect")
-    .attr("y", 480)
-    .attr("x", function(d, i){ return w - (i*ls_w) - start;})
-    .attr("width", ls_w)
-    .attr("height", ls_h)
-    .style("fill", function(d, i) { return colorFunc(d); })
-
-  var maxval = d3.max(mapdat.features, function(d){
-    return Math.round(d.properties.variable);
-  });
-
-  breaks.push(maxval);
-
-  svg.selectAll(".legend-label")
-    .data(breaks)
-    .enter().append("text")
-    .attr('class', "legend-label")
-    .attr("y", 477)
-    .attr("x", function(d, i) { return w - (i*ls_w) + ls_w - start - 5; })
-    .text(function(d) { return d; });
-
-  updateGraph(color, selection, "#barchart", 500, monthyear)
-});
-};
-
-function updateTS(country, selection) {
-  d3.select("#tschart")
-    .html("");
-
-  d3.csv('indicator.csv', function(error, tsdata){
-    if (error) throw error;
-
-  var parseDate = d3.time.format("%Y-%m");
-
-  var tsdata = tsdata.filter(function(d){
-    return (d.fullname == country);
-  }).map(function(d) {
-    d.pmonth = parseDate.parse(d.month);
-    return d;
-  }).sort(function(a, b){
-    if(a.pmonth > b.pmonth) return -1;
-    if(a.pmonth < b.pmonth) return 1;
-    return 0;
-  });
-
- 
-  var margin = {top: 50, right: 8, bottom: 80, left: 80},
-      width = 800 - margin.left - margin.right,
-      height = 618 - margin.top - margin.bottom;
-
-  var x = d3.time.scale()
-    .range([0, width]);
-
-  var y = d3.scale.linear()
-    .range([height, 0]);
-
-  var xAxis = d3.svg.axis()
-    .scale(x)
-    .tickFormat(d3.time.format("%b %Y"))
-	//makes the xAxis ticks a little longer than the xMinorAxis ticks
-    .tickSize(10)
-    .orient("bottom");
-
-  var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left");
-
-  // function for the y grid lines
-  function make_y_axis() {
-    return d3.svg.axis()
-      .scale(y)
-      .orient("left")
-      //.ticks(5)
-  }
-
-  var values = [];
-
-  for (var i = 0; i < selection.length; i++) {
-    values = values.concat(tsdata.map(function(d) { return +d[selection[i]]; }));
-  }
-
-  y.domain([0, d3.max(values)]);
-
-  var svg = d3.select("#tschart")
-    .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-  x.domain([moment('2017-10-20'), moment()]);
-  
-  // Draw the y Grid lines
-  svg.append("g")
-    .attr("class", "grid")
-    .call(make_y_axis()
-      .tickSize(-width, 0, 0)
-      .tickFormat("")
-    );  
-
-  var g = svg.selectAll()
-    .data(tsdata).enter().append("g");
-
-  if (selection.indexOf('twitter') > -1){
-    var twline = d3.svg.line()
-      .x(function(d) { return x(d.pmonth); })
-      .y(function(d) { return y(d.twitter); })
-
-    svg.append("path")
-      .datum(tsdata)
-      .attr("stroke", "#1A5EAB")
-      .attr('fill', "transparent")
-      .attr('stroke-width', 3)
-      .attr("class", "line")
-      .attr("d", twline);
-
-    g.append("circle")
-      .attr("fill", "#1A5EAB")
-      .attr("r", 4)
-      .attr("cx", function(d) { return x(d.pmonth); })
-      .attr("cy", function(d) { return y(d.twitter); })
-  }
-
-  if (selection.indexOf('trends') > -1){
-     var trline = d3.svg.line()
-      .x(function(d) { return x(d.pmonth); })
-      .y(function(d) { return y(d.trends); })
-
-    svg.append("path")
-      .datum(tsdata)
-      .attr("stroke", "#E6673e")
-      .attr('fill', "transparent")
-      .attr('stroke-width', 3)
-      .attr("class", "line")
-      .attr("d", trline);
-
-    g.append("circle")
-      .attr("fill", "#E6673e")
-      .attr("r", 4)
-      .attr("cx", function(d) { return x(d.pmonth); })
-      .attr("cy", function(d) { return y(d.trends); })
- 
-  }
-
-  if (selection.indexOf('news') > -1){
-    var nline = d3.svg.line()
-      .x(function(d) { return x(d.pmonth); })
-      .y(function(d) { return y(d.news); })
-
-    svg.append("path")
-      .datum(tsdata)
-      .attr("stroke", "#5b5c61")
-      .attr('fill', "transparent")
-      .attr('stroke-width', 3)
-      .attr("class", "line")
-      .attr("d", nline);
-
-    g.append("circle")
-      .attr("fill", "#5b5c61")
-      .attr("r", 4)
-      .attr("cx", function(d) { return x(d.pmonth); })
-      .attr("cy", function(d) { return y(d.news); })
-  }
-
-  if (selection.indexOf('overall') > -1){
-    var oline = d3.svg.line()
-      .x(function(d) { return x(d.pmonth); })
-      .y(function(d) { return y(d.overall); })
-
-    svg.append("path")
-      .datum(tsdata)
-      .attr("stroke", "#356d57")
-      .attr('fill', "transparent")
-      .attr('stroke-width', 6)
-      .attr("class", "line")
-      .attr("d", oline);
-
-     g.append("circle")
-      .attr("fill", "#357d57")
-      .attr("r", 5)
-      .attr("cx", function(d) { return x(d.pmonth); })
-      .attr("cy", function(d) { return y(d.overall); })
-  }
-
-  var dif = moment().diff(moment('2017-10-20'), 'months', true)
-
-  svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis.ticks(dif))
-    .selectAll(".tick text")
-    .call(wrap, 35);
-
-  svg.append("text")      // text label for the x-axis
-    .attr("x", width / 2 )
-    .attr("y",  height + margin.bottom)
-    .style("text-anchor", "middle")
-    .text("Month");
-
-  svg.append("text")      // text label for the y-axis
-    .attr("y",30 - margin.left)
-    .attr("x",50 - (height / 2))
-    .attr("transform", "rotate(-90)")
-    .style("text-anchor", "end")
-    .style("font-size", "16px")
-    .text("Score");
-
-  svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis)
-});
-};
-
-function wrap(text, width) {
-  text.each(function() {
-    var text = d3.select(this),
-        words = text.text().split(/\s+/).reverse(),
-        word,
-        line = [],
-        lineNumber = 0,
-        lineHeight = 1.1, // ems
-        y = text.attr("y"),
-        dy = parseFloat(text.attr("dy")),
-        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-    while (word = words.pop()) {
-      line.push(word);
-      tspan.text(line.join(" "));
-      if (tspan.node().getComputedTextLength() > width) {
-        line.pop();
-        tspan.text(line.join(" "));
-        line = [word];
-        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
-      }
-    }
-  });
-}
