@@ -66,7 +66,6 @@
 
 #tsbutton{
   margin-left: auto;
-  margin-right: 0px;
   background-color: #0193D7
 }
 
@@ -82,20 +81,26 @@
 
 #tschart{
   margin-left: 75px;
-  float: left;
 }
 
 #tsbuttons{
-  margin-left: 850px;
-  width: 200px;
-  display: block;
+  margin: auto;
+  margin-top: 20px;
+  width: 850px;
+}
+
+#tsbuttons > div
+{
+	display: inline-block;
 }
 
 .ck-button {
-    margin:10px;
+    margin: 3px;
     background-color:#EFEFEF;
     border-radius:10px;
-    font-size: 20px;
+    font-size: 25px;
+    width: 200px;
+    height: 35px;
 }
 
 .ck-button label {
@@ -156,16 +161,8 @@
 }
 
 #tsselect{
-  margin: 0 auto;
+  margin: auto;
   width: 350px;
-}
-
-#newsbutton{
-  background-color: red;
-}
-
-#newsbutton:focus {
-  background-color: yellow;
 }
 
 select {

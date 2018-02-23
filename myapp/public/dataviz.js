@@ -25,7 +25,7 @@ function setupTS(){
     .text(function (d) {return d; });
 
   var newsradio = d3.select("#tsbuttons")
-    .html('<form>   <div class="ck-button" id="twitterbox">     <label>     <input type="checkbox" id="ckbox" name="tsbox" value="twitter"><span>Twitter</span>     </label>   </div>   <div class="ck-button" id="newsbox">     <label>     <input type="checkbox" id="ckbox" name="tsbox" value="news"><span>Internet Newspapers</span>     </label>   </div>   <div class="ck-button" id="trendsbox">     <label>     <input type="checkbox" id="ckbox" name="tsbox" value="trends"><span>Google Trends</span>     </label>   </div>   <div class="ck-button" id="overallbox">     <label>     <input type="checkbox"  id="ckbox" name="tsbox" value="overall"><span>Overall Indicator</span>     </label>   </div> </form> ')
+    .html('<div class="ck-button" id="twitterbox">     <label>     <input type="checkbox" id="ckbox" name="tsbox" value="twitter"><span>Twitter</span>     </label>   </div>   <div class="ck-button" id="newsbox">     <label>     <input type="checkbox" id="ckbox" name="tsbox" value="news"><span>Newspapers</span>     </label>   </div>   <div class="ck-button" id="trendsbox">     <label>     <input type="checkbox" id="ckbox" name="tsbox" value="trends"><span>Google Trends</span>     </label>   </div>   <div class="ck-button" id="overallbox">     <label>     <input type="checkbox"  id="ckbox" name="tsbox" value="overall"><span>Overall Indicator</span>     </label>   </div>')
     .on('change', onchange)
 
   //Get the month
@@ -40,7 +40,7 @@ function setupTS(){
     dateStart.add(1, 'month');
   }
 
-  var margin = {top: 50, right: 8, bottom: 80, left: 80},
+  var margin = {top: 40, right: 0, bottom: 80, left: 80},
       width = 800 - margin.left - margin.right,
       height = 618 - margin.top - margin.bottom;
 
@@ -109,86 +109,64 @@ function setupTS(){
       news: +0,
       overall: +0,
     };
+  }).sort(function(a, b){
+    if(a.pmonth > b.pmonth) return -1;
+    if(a.pmonth < b.pmonth) return 1;
+    return 0;
   });
-
-  var circles = svg.selectAll()
-    .data(data).enter().append('circle');
-
-  var paths = svg.selectAll()
-    .data(data).enter().append('path');
 
   //Setup Twitter
   var twline = d3.svg.line()
-    .x(function(d) { return console.log(x(d.pmonth)); x(d.pmonth); })
-    .y(function(d) { return console.log(y(d.twitter)); y(d.twitter); })
+    .x(function(d) { return  x(d.pmonth); })
+    .y(function(d) { return  y(d.twitter); })
   
-  paths
-    .attr("stroke", "transparent")
+  var twpaths = svg.selectAll()
+    .data(data).enter().append('path')
+    .attr("stroke", "#1A5EAB")
     .attr('fill', "transparent")
     .attr('stroke-width', 3)
     .attr("class", "line")
-    .attr("d", twline);
+    .attr("d", twline(data));
 
-  circles
-    .attr("fill", "transparent")
-    .attr("r", 4)
-    .attr("cx", function(d) { return x(d.pmonth); })
-    .attr("cy", function(d) { return y(d.twitter); })
- 
   //Setup Trends
   var trline = d3.svg.line()
     .x(function(d) { return x(d.pmonth); })
     .y(function(d) { return y(d.trends); })
 
-  paths
-    .attr("stroke", "transparent")
-    .attr('fill', "transparent")
+  var trpaths = svg.selectAll()
+    .data(data).enter().append('path')
+    .attr("stroke", '#e6673e')
+    .attr("fill", 'transparent')
     .attr('stroke-width', 3)
-    .attr("class", "line")
-    .attr("d", trline);
+    .attr('class', 'line')
+    .attr('d', trline(data));
 
-  circles
-    .attr("fill", "transparent")
-    .attr("r", 4)
-    .attr("cx", function(d) { return x(d.pmonth); })
-    .attr("cy", function(d) { return y(d.trends); })
-
-  //News
+  //Setup News
   var nline = d3.svg.line()
-    .x(function(d) { return x(d.pmonth); })
-    .y(function(d) { return y(d.news); })
-
-  paths
-    .attr("stroke", "transparent")
+    .x(function(d) { return  x(d.pmonth); })
+    .y(function(d) { return  y(d.news); })
+  
+  var npaths = svg.selectAll()
+    .data(data).enter().append('path')
+    .attr("stroke", "#5b5c62")
     .attr('fill', "transparent")
     .attr('stroke-width', 3)
     .attr("class", "line")
-    .attr("d", nline);
+    .attr("d", nline(data));
 
-  circles
-    .attr("fill", "transparent")
-    .attr("r", 4)
-    .attr("cx", function(d) { return x(d.pmonth); })
-    .attr("cy", function(d) { return y(d.news); })
-
-  //Overall
+  //Setup Overall
   var oline = d3.svg.line()
     .x(function(d) { return x(d.pmonth); })
     .y(function(d) { return y(d.overall); })
 
-  paths
-    .attr("stroke", "transparent")
-    .attr('fill', "transparent")
-    .attr('stroke-width', 6)
-    .attr("class", "line")
-    .attr("d", oline);
+  var opaths = svg.selectAll()
+    .data(data).enter().append('path')
+    .attr("stroke", '#e6673e')
+    .attr("fill", 'transparent')
+    .attr('stroke-width', 5)
+    .attr('class', 'line')
+    .attr('d', trline(data));
 
-  circles
-    .attr("fill", "transparent")
-    .attr("r", 5)
-    .attr("cx", function(d) { return x(d.pmonth); })
-    .attr("cy", function(d) { return y(d.overall); })
- 
   function onchange(){
     var selectCountry = d3.select("#countryselect").property('value');
 
@@ -203,6 +181,15 @@ function setupTS(){
    d3.csv('indicator.csv', function(error, tsdata){
       if (error) throw error;
 
+      if (selectCountry == 'Select a Country'){
+        y.domain([0, 5])
+        svg.select(".y")
+          .transition()
+          .duration(1500)
+          .call(yAxis);
+        return;
+      }
+
       var tsdata = tsdata.filter(function(d){
         return (d.fullname == selectCountry);
       }).map(function(d) {
@@ -214,24 +201,66 @@ function setupTS(){
         return 0;
       });
 
-      var values = []
-
-      for (var i = 0; i < choices.length; i++) {
-        values = values.concat(tsdata.map(function(d) { return +d[choices[i]]; }));
+      if (choices.indexOf('twitter') == -1){
+        tsdata = tsdata.map(function(d){
+          return {
+            pmonth: d.pmonth,
+            twitter: 0,
+            news: d.news,
+            overall: d.overall,
+            trends: d.trends,
+          };
+        });
       };
 
-      if (selectCountry == 'Select a Country' | choices.length == 0){
-        y.domain([0, 5])
-        svg.select(".y")
-          .transition()
-          .duration(1500)
-          .call(yAxis);
-        return;
-      }
+      if (choices.indexOf('news') == -1){
+        tsdata = tsdata.map(function(d){
+          return {
+            pmonth: d.pmonth,
+            twitter: d.twitter,
+            news: 0,
+            overall: d.overall,
+            trends: d.trends,
+          };
+        });
+      };
+
+      if (choices.indexOf('overall') == -1){
+        tsdata = tsdata.map(function(d){
+          return {
+            pmonth: d.pmonth,
+            twitter: d.twitter,
+            news: d.news,
+            overall: 0,
+            trends: d.trends,
+          };
+        });
+      };
+
+      if (choices.indexOf('trends') == -1){
+        tsdata = tsdata.map(function(d){
+          return {
+            pmonth: d.pmonth,
+            twitter: d.twitter,
+            news: d.news,
+            overall: d.overall,
+            trends: 0,
+          };
+        });
+      };
+
+      var values = [].concat(tsdata.map(function(d) { return +d.twitter; }),
+                             tsdata.map(function(d) { return +d.news; }),
+                             tsdata.map(function(d) { return +d.overall; }),
+                             tsdata.map(function(d) { return +d.trends; }));
 
       var max = values.reduce(function(a, b) {
         return Math.max(a, b);
       });
+
+      if (max == 0){
+        max = 5;
+      }
 
       y.domain([0, max]);
 
@@ -241,102 +270,32 @@ function setupTS(){
         .duration(1500)
         .call(yAxis);  
 
-      if (choices.indexOf('twitter') > -1){
-        var twline = d3.svg.line()
-          .x(function(d) { return x(d.pmonth); })
-          .y(function(d) { return y(d.twitter); })
+      twpaths
+        .transition()
+        .duration(1500)
+        .attr("stroke", "#1A5EAB")
+        .attr("d", twline(tsdata));
 
-        /*paths.selectAll("path")
-          .transition()
-          .duration(1500)
-          .attr("stroke", "#1A5EAB")
-          .attr('fill', "transparent")
-          .attr('stroke-width', 3)
-          .attr("class", "line")
-          .attr("d", twline);
-*/
-        circles.selectAll("circle")
-          .transition()
-          .duration(1500)
-          .attr("fill", "#1A5EAB")
-          .attr("r", 4)
-          .attr("cx", function(d) { return x(d.pmonth); })
-          .attr("cy", function(d) { return y(d.twitter); })
-      };
+      trpaths
+        .transition()
+        .duration(1500)
+        .attr("stroke", "#e6673e")
+        .attr("d", trline(tsdata));
 
-    
-      if (choices.indexOf('trends') > -1){
-         var trline = d3.svg.line()
-          .x(function(d) { return x(d.pmonth); })
-          .y(function(d) { return y(d.trends); })
-    
-        paths.selectAll("path")
-          .transition()
-          .duration(1500)
-          .attr("stroke", "#E6673e")
-          .attr('fill', "transparent")
-          .attr('stroke-width', 3)
-          .attr("class", "line")
-          .attr("d", trline);
-    
-        circles.selectAll("circle")
-          .transition()
-          .duration(1500)
-          .attr("fill", "#E6673e")
-          .attr("r", 4)
-          .attr("cx", function(d) { return x(d.pmonth); })
-          .attr("cy", function(d) { return y(d.trends); })
-     
-      };
-    
-      if (choices.indexOf('news') > -1){
-        var nline = d3.svg.line()
-          .x(function(d) { return x(d.pmonth); })
-          .y(function(d) { return y(d.news); })
-    
-        paths.selectAll("path")
-          .transition()
-          .duration(1500)
-          .attr("stroke", "#5b5c61")
-          .attr('fill', "transparent")
-          .attr('stroke-width', 3)
-          .attr("class", "line")
-          .attr("d", nline);
-    
-        circles.selectAll("circle")
-          .transition()
-          .duration(1500)
-          .attr("fill", "#5b5c61")
-          .attr("r", 4)
-          .attr("cx", function(d) { return x(d.pmonth); })
-          .attr("cy", function(d) { return y(d.news); })
-      };
-    
-      if (choices.indexOf('overall') > -1){
-        var oline = d3.svg.line()
-          .x(function(d) { return x(d.pmonth); })
-          .y(function(d) { return y(d.overall); })
-    
-        paths.selectAll("path")
-          .transition()
-          .duration(1500)
-          .attr("stroke", "#356d57")
-          .attr('fill', "transparent")
-          .attr('stroke-width', 6)
-          .attr("class", "line")
-          .attr("d", oline);
-    
-        circles.selectAll("circle")
-          .transition()
-          .duration(1500)
-          .attr("fill", "#357d57")
-          .attr("r", 5)
-          .attr("cx", function(d) { return x(d.pmonth); })
-          .attr("cy", function(d) { return y(d.overall); })
-      };
-    });  
-  };
-};
+      npaths
+        .transition()
+        .duration(1500)
+        .attr("stroke", "#5b5c62")
+        .attr("d", nline(tsdata));
+
+      opaths
+        .transition()
+        .duration(1500)
+        .attr("stroke", "#357d57")
+        .attr("d", oline(tsdata));
+    });
+  };  
+};;
 
 function wrap(text, width) {
   text.each(function() {
@@ -396,9 +355,9 @@ function setupMap(){
 
   //Create thematic dropdown 
   var dataoptions = [{'label': "Select a Data Source", 'color': 'color:#000000'},
-		     {'label': "Twitter Data", 'color': "color:#1A5EAB"},
-                     {'label': "Internet Newspaper Data", "color": "color:#5b5c62"},
-                     {'label': "Google Trends Data", "color": "color:#e6673e"},
+		     {'label': "Twitter", 'color': "color:#1A5EAB"},
+                     {'label': "Newspapers", "color": "color:#5b5c62"},
+                     {'label': "Google Trends", "color": "color:#e6673e"},
                      {'label': "Overall Indicator", "color": "color:#357d57"}];
 
   var select = d3.select("#mapselect")
@@ -547,15 +506,15 @@ function setupMap(){
       return;
     }
     
-    if(varValue == "Twitter Data"){
+    if(varValue == "Twitter"){
       var color = "#1a5eab";
       var selection = "twitter";
     }
-    if(varValue == "Internet Newspaper Data"){
+    if(varValue == "Newspapers"){
       var color = "#5b5c61";
       var selection = "news";
     }
-    if(varValue == "Google Trends Data"){
+    if(varValue == "Google Trends"){
       var color = "#E6673e";
       var selection = "trends";
     }
