@@ -53,6 +53,7 @@ def rescaledf(df, bycol, rescalecol):
     
     for i in df[bycol].unique():
         sel = df[df[bycol]==i]
+        sel = sel.loc[sel['country'].isin(countries['country'])]
         sel[rescalecol] = sel[rescalecol]/max(sel[rescalecol])*100
         newdf = pd.concat([newdf, sel])
     
