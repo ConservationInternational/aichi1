@@ -27,7 +27,7 @@ function updateGraph(data, color, id, n) {
     top: 22,
     right: 20,
     bottom: 0,
-    left: 267
+    left:100, 
   };
   
   var graphWidth = width - margins.right - margins.left;
@@ -85,15 +85,24 @@ function updateGraph(data, color, id, n) {
 
 function updateMap(data, color){
 
-  var mapdat = data.map(function(d){
+  var geodata = d3.select('#countriesgeo').html().trim();
+  geodata = d3.csv.parse(geodata, function (d) {
+    return {
+      fullname: d.fullname,
+      country: d.country,
+      geo: d.geo,
+    };
+  });
+  
+  var mapdat = geodata.map(function(d){
     var geoJson = JSON.parse(d.geo);
-    geoJson['properties']['variable'] = +d.variable;
+    geoJson['properties']['country'] = d.country;
     geoJson['properties']['fullname'] = d.fullname;
     return geoJson;
   });
-
+  
   mapdat = {'type': 'FeatureCollection',
-            'features': mapdat};
+  		'features': mapdat} 
 
   var w = 1000;
   var h = 500;
@@ -116,8 +125,8 @@ function updateMap(data, color){
     .attr("width", w)
     .attr("height", h);
 
-  var values = mapdat.features.map(function(d) {
-    return d.properties.variable;
+  var values = data.map(function(d) {
+    return d.variable;
   });
 
   var colorRange = generateColor(color, "#FFFFFF", 10);
@@ -131,10 +140,16 @@ function updateMap(data, color){
     .enter().append('path')
     .attr('class', 'land')
     .attr('d', path)
+    .each(function(d){
+      var country = data.filter(function(c){
+        return c.fullname == d.properties['fullname']
+      })
+      d.variable = country[0].variable;
+    })
     .attr("fill", function(d){
-      var out = colorFunc(d.properties.variable);
+      var out = colorFunc(d.variable);
       //Not sure why this is necessary but it seems to be so
-      if (d.properties.variable == 0) {
+      if (d.variable == 0) {
         out = "#FFFFFF";
       };
       return out;
@@ -180,36 +195,22 @@ function updateMap(data, color){
 
 };
 
+$('#id1 p').each(function() {
+    var text = $(this).text();
+    $(this).text(text.replace('MONTH YEAR', moment().format('MMMM YYYY'))); 
+});
 
 d3.csv('indicator.csv', function(error, data){
   if (error) throw err;
 
-  var monthyear = moment().format('M-YYYY')
+  var monthyear = moment().format('YYYY-M')
   
   data = data.filter(function (d) {
 	return (d.month == monthyear);
   });
-
-  geodata = d3.csv.parse(geodata, function (d) {
-    return {
-      fullname: d.fullname,
-      country: d.country,
-      geo: d.geo,
-    };
-  });
   
-  var mapdat = geodata.map(function(d){
-    var geoJson = JSON.parse(d.geo);
-    geoJson['properties']['country'] = d.country;
-    geoJson['properties']['fullname'] = d.fullname;
-    return geoJson;
-  });
-  
-  mapdat = {'type': 'FeatureCollection',
-  		'features': mapdat}
+  var selection = 'overall';  
    
-  var selection = 'overall';
-      
   sel = data.map(function (d) {
     return {
       fullname: d.fullname,
