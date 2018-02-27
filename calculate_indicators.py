@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from pymongo import MongoClient
 import os
-import datetime
 
 #os.chdir('D://Documents and Settings/mcooper/GitHub/aichi1/')
 os.chdir('/home/ec2-user/aichi1/')
@@ -45,26 +44,12 @@ for doc in cursor:
 trends = pd.DataFrame(trends)
 trends.loc[trends.trends==0, 'trends'] = np.NaN
 
-def rescaledf(df, bycol, rescalecol):
-    '''Rescale according to the max in rescalecol,
-    For each group in bycol'''
-    
-    newdf = pd.DataFrame()
-    
-    for i in df[bycol].unique():
-        sel = df[df[bycol]==i]
-        sel = sel.loc[sel['country'].isin(countries['country'])]
-        sel[rescalecol] = sel[rescalecol]/max(sel[rescalecol])*100
-        newdf = pd.concat([newdf, sel])
-    
-    return(newdf)
-
 #Rescale PER MONTH
 twitter = pd.DataFrame(twitter)
-twitter = rescaledf(twitter, 'month', 'twitter')
+twitter['twitter'] = twitter['twitter']/0.05 * 100
 
 news = pd.DataFrame(news)
-news = rescaledf(news, 'month', 'news')
+news['news'] = news['news']/0.25 * 100
 
 #Fix Month and Date Format Issues
 def reformatMonthStr(string):
