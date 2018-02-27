@@ -46,10 +46,14 @@ trends.loc[trends.trends==0, 'trends'] = np.NaN
 
 #Rescale PER MONTH
 twitter = pd.DataFrame(twitter)
-twitter['twitter'] = twitter['twitter']/0.05 * 100
+twitter['twitter_absolute'] = twitter['twitter']
+twitter['twitter'] = twitter['twitter']/0.01 * 100
+twitter['twitter'][twitter['twitter'] > 100] = 100
 
 news = pd.DataFrame(news)
+news['news_absolute'] = news['news']
 news['news'] = news['news']/0.25 * 100
+news['news'][news['news'] > 100] = 100
 
 #Fix Month and Date Format Issues
 def reformatMonthStr(string):

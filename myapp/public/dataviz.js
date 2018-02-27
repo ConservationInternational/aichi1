@@ -502,6 +502,9 @@ function setupMap(){
 
     var varValue = d3.select("#varselect").property('value');
 
+    //delete any existing tooltips
+    d3.selectAll('#tooltip').remove();
+
     if (monthLabel == 'Select a Month' | varValue == 'Select a Data Source'){
       return;
     }
@@ -584,6 +587,7 @@ function setupMap(){
     
       var tooltip = d3.select('#map')
         .append("div")
+        .attr('id', 'tooltip')
         .style("position", "absolute")
         .style("z-index", "10")
         .style("color", "black")
