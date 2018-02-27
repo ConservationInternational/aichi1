@@ -27,7 +27,7 @@ function updateGraph(data, color, id, n) {
     top: 22,
     right: 20,
     bottom: 0,
-    left:100, 
+    left:150, 
   };
   
   var graphWidth = width - margins.right - margins.left;

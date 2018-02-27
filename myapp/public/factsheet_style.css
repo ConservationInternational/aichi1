@@ -1,3 +1,73 @@
 .tick{
   font-size:70%;
 }
+
+.logo {
+  top: 25px;
+  left: 25px;
+  position: absolute;
+}
+
+.banner {
+  top: 10px;
+  position:absolute;
+}
+
+.mlogo {
+  top: 1500px;
+  left: 25px;
+  position: absolute;
+}
+
+.mbanner {
+  top: 1485px;
+  position:absolute;
+}
+
+#introtext{
+  margin-top: 200px;
+}
+
+.words{
+  margin-left: 75px;
+  margin-right: 75px;
+}
+
+#barchart{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#map{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.land {
+  stroke: #000000;
+  stroke-width: 0.5
+}
+
+* {
+ font-family: Helvetica;
+}
+
+hr {
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+svg{
+    display: block;
+    margin: auto;
+}
+
+#id1{
+  top: 200px;
+  position: absolute;
+}
+
+#id2{
+  top:1700px;
+  position: absolute;
+}
