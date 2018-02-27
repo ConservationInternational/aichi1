@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 
 os.chdir('/home/ec2-user/aichi1/collect-webhose')
 
-print('Establish connections')
+#print('Establish connections')
 client = MongoClient('localhost', 27017)
 detailcon = client.TWITTER['WEBHOSE-DETAIL']
 baselinecon = client.TWITTER['WEBHOSE-BASELINE']
@@ -62,7 +62,7 @@ issues_melt = issues_melt.loc[issues_melt['value'] != 'XyEf9fAl2IuV6u97aM7a']
 #Get times
 ########################
 
-print('get times')
+#print('get times')
 twodaysago = datetime.now() - timedelta(days=2)
 yesterday = datetime.now() - timedelta(days=1)
 
@@ -97,7 +97,7 @@ for wl in wordlists:
     output = webhoseio.query("filterWebContent", query_params)
     if wordlists.index(wl) == 0:
         beginRequests = output['requestsLeft']
-        print('----------------------------\nBegan with ' + str(beginRequests + 1) + ' requests available\n')    
+ #       print('----------------------------\nBegan with ' + str(beginRequests + 1) + ' requests available\n')    
     #todo any handling
     while len(output['posts']) > 0:
         for i in output['posts']:
@@ -118,13 +118,13 @@ for wl in wordlists:
             uuids.append(i['uuid'])
         output = webhoseio.get_next()
 
-print('Ended keyword search with ' + str(output['requestsLeft']) + ' available\n------------------------------')
+#print('Ended keyword search with ' + str(output['requestsLeft']) + ' available\n------------------------------')
 
 #############################################
 #Get baseline rates for every observed country
 ###############################################
 
-print('Checking all countries for baseline\n\n')
+#print('Checking all countries for baseline\n\n')
 for country in countries:
     q = "thread.country:" + country + ' published:>' + start + ' published:<' + stop + ' site_type:news'
     query_params = {"q": q, "ts":start}
@@ -143,5 +143,5 @@ for country in countries:
             post['baseline'] = size
             baselinecon.save(post)
 
-print('Country search ended with ' + str(output['requestsLeft']) + ' available\n\n')
-print('The processed ended up using ' + str(beginRequests - output['requestsLeft']) + ' total requests')
+#print('Country search ended with ' + str(output['requestsLeft']) + ' available\n\n')
+#print('The processed ended up using ' + str(beginRequests - output['requestsLeft']) + ' total requests')

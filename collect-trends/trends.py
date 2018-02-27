@@ -46,9 +46,9 @@ for i in range(0,len(kw_list)):
     out['name'] = out.index
     
     #Check Google Trends country names match our country names
-    for n in out['name']:
-        if n not in countries['name'].tolist():
-            print('WARNING! ' + n + ' missing from countries table')
+    #for n in out['name']:
+    #    if n not in countries['name'].tolist():
+    #        print('WARNING! ' + n + ' missing from countries table')
     
     comb = pd.merge(out, countries, how='outer', on='name')
     comb = comb.fillna(0)

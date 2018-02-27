@@ -36,7 +36,7 @@ TAR=$DEST/../$TIME.tar
 /bin/mkdir -p $DEST
 
 # Log
-echo "Backing up $HOST/$DBNAME to s3://$BUCKET/ on $TIME";
+#echo "Backing up $HOST/$DBNAME to s3://$BUCKET/ on $TIME";
 
 # Dump from mongodb host into backup directory
 /usr/bin/mongodump -h $HOST -d $DBNAME -o $DEST
@@ -54,7 +54,7 @@ echo "Backing up $HOST/$DBNAME to s3://$BUCKET/ on $TIME";
 /bin/rm -rf $DEST
 
 # All done
-echo "Backup available at https://s3.amazonaws.com/$BUCKET/$TIME.tar"
+#echo "Backup available at https://s3.amazonaws.com/$BUCKET/$TIME.tar"
 
 #TO RESTORE
 # wget -O backup.tar https://s3.amazonaws.com/my-bucket/xx-xx-xxxx-xx:xx:xx.tar

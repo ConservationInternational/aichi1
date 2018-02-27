@@ -15,7 +15,7 @@ import carmen
 
 os.chdir('/home/ec2-user/aichi1/collect-twitter/')
 
-print('Load geocoding resolver')
+#print('Load geocoding resolver')
 resolver = carmen.get_resolver(order=['profile'])
 resolver.load_locations()
 
@@ -107,16 +107,16 @@ class StdOutListener(tweepy.StreamListener):
 
 
     def on_error(self, status):
-        print('error!' + str(status))
+        #print('error!' + str(status))
         f = open('errorlong.txt', 'w')
         f.write(str(datetime.datetime.now())+str(status))
         f.close()
 
-print('Connect to Twitter')
+#print('Connect to Twitter')
 l = StdOutListener()
 auth = tweepy.OAuthHandler(consumerKey, consumerSecret)
 auth.set_access_token(accessToken, accessTokenSecret)
 
 stream = tweepy.Stream(auth, l)
-print('Begin sampling')
+#print('Begin sampling')
 stream.sample()
