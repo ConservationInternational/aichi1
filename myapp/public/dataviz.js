@@ -117,6 +117,7 @@ function setupTS(){
 
   //Setup Twitter
   var twline = d3.svg.line()
+    .interpolate('basis')
     .x(function(d) { return  x(d.pmonth); })
     .y(function(d) { return  y(d.twitter); })
   
@@ -130,6 +131,7 @@ function setupTS(){
 
   //Setup Trends
   var trline = d3.svg.line()
+    .interpolate('basis')
     .x(function(d) { return x(d.pmonth); })
     .y(function(d) { return y(d.trends); })
 
@@ -143,6 +145,7 @@ function setupTS(){
 
   //Setup News
   var nline = d3.svg.line()
+    .interpolate('basis')
     .x(function(d) { return  x(d.pmonth); })
     .y(function(d) { return  y(d.news); })
   
@@ -156,6 +159,7 @@ function setupTS(){
 
   //Setup Overall
   var oline = d3.svg.line()
+    .interpolate('basis')
     .x(function(d) { return x(d.pmonth); })
     .y(function(d) { return y(d.overall); })
 
