@@ -6,7 +6,7 @@ s3 = boto3.resource('s3')
 client = MongoClient('localhost', 27017)
 
 def writeDfToS3Csv(df, name):
-    s3.Bucket('ci-tweet-csv-dumps').put_object(Key=name + '.csv', Body=df.to_csv(index=False))
+    s3.Bucket('ci-tweet-csv-dumps').put_object(Key=name + '.csv', Body=df.to_csv(index=False), ACL='public-read')
 
 def getDfFromMongo(conname):
     temp = []
