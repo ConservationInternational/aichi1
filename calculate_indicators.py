@@ -80,3 +80,7 @@ comb = comb[comb.month != '2017-10']
 
 comb.to_csv('myapp/public/indicator.csv', index=False)
 
+
+comb.to_csv('myapp/public/indicator.csv', index=False)
+comb.to_csv('myapp/public/indicator.csv', index=False)
+comb.to_csv('myapp/public/indicator.csv', index=False)

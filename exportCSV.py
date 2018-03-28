@@ -19,4 +19,5 @@ def getDfFromMongo(conname):
 for c in ['TRENDS', 'TWITTER-BASELINE', 'TWITTER-DETAIL', 'WEBHOSE-BASELINE', 'WEBHOSE-DETAIL']:
     df = getDfFromMongo(c)
     writeDfToS3Csv(df, c)
+    df.to_csv("~/aichi1/myapp/public/csvs/" + c + ".csv", index=False)
 
