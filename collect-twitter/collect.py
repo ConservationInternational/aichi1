@@ -21,7 +21,7 @@ resolver.load_locations()
 
 issues = pd.read_csv('issues.csv', encoding='utf-8')
 issues_melt = pd.melt(issues.drop('google_topic_id', axis=1))
-issues_met = issues_melt.loc[issues_melt['value'] != 'XyEf9fAl2IuV6u97aM7a']
+issues_melt = issues_melt.loc[issues_melt['value'] != 'XyEf9fAl2IuV6u97aM7a']
 species = pd.read_csv('species_list.csv', header=None, encoding='utf-8')
 
 s3 = boto3.resource('s3')
@@ -83,9 +83,13 @@ class StdOutListener(tweepy.StreamListener):
         #Also track tweets with any, make sure we only track once
         anytweet = True
 
+        species_tweet = False
+        keyword_tweet = False
+
         #Check species
         for s in species[0]:
             if s.lower() in out.get('text').lower():
+                species_tweet = True
                 increment({'country': country, 'month': month, 'day': day, 'species': s}, 'count', twittercon)
                 s3.Bucket('catch-species').put_object(Key='-'.join([country, month, day, s, now]), Body=json.dumps(out, ensure_ascii=False))
                 if anytweet:
@@ -95,6 +99,7 @@ class StdOutListener(tweepy.StreamListener):
         #Check issues
         for i in issues_melt['value']:
             if i.lower() in out.get('text').lower():
+                keyword_tweet = True
                 row,lang = look_using_generator(issues, i)[0]
                 eng = issues.get_value(row, 'en')
                 increment({'country': country, 'month': month, 'day': day, 'issue': eng, 'language': lang}, 'count', twittercon)
@@ -102,6 +107,9 @@ class StdOutListener(tweepy.StreamListener):
                 if anytweet:
                     increment({'country': country, 'month': month, 'day':day}, 'any', baselinecon)
                     anytweet = False
+        
+        if species_tweet and not keyword_tweet:
+            increment({'country': country, 'month': month, 'day': day}, 'just_species', baselinecon)
 
         return True
 
