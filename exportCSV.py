@@ -5,6 +5,8 @@ import boto3
 s3 = boto3.resource('s3')
 client = MongoClient('localhost', 27017)
 
+countries = pd.read_csv('countries.csv', names=['fullname', 'country'])
+
 def writeDfToS3Csv(df, name):
     s3.Bucket('ci-tweet-csv-dumps').put_object(Key=name + '.csv', Body=df.to_csv(index=False), ACL='public-read')
 
@@ -18,6 +20,8 @@ def getDfFromMongo(conname):
 
 for c in ['TRENDS', 'TWITTER-BASELINE', 'TWITTER-DETAIL', 'WEBHOSE-BASELINE', 'WEBHOSE-DETAIL']:
     df = getDfFromMongo(c)
+    df = pd.merge(df, countries)
+    df = df[df['month'] != '2017-10']
     writeDfToS3Csv(df, c)
     df.to_csv("~/aichi1/myapp/public/csvs/" + c + ".csv", index=False)
 
