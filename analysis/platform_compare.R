@@ -4,7 +4,8 @@ library(ggplot2)
 #twitter
 twit_d <- read.csv('https://ci-tweet-csv-dumps.s3.amazonaws.com/TWITTER-DETAIL.csv') %>%
   filter(issue != "" & !month %in% c('2017-10', '2018-04'))
-twit_b <- read.csv('https://ci-tweet-csv-dumps.s3.amazonaws.com/TWITTER-BASELINE.csv')
+twit_b <- read.csv('https://ci-tweet-csv-dumps.s3.amazonaws.com/TWITTER-BASELINE.csv') %>%
+  filter(!month %in% c('2017-10', '2018-04'))
 
 twit_total <- sum(twit_b$baseline)
 
@@ -15,8 +16,9 @@ twit_d <- twit_d %>%
 
 #newspapers
 news_d <- read.csv('https://ci-tweet-csv-dumps.s3.amazonaws.com/WEBHOSE-DETAIL.csv') %>%
-  filter(issue != "" & !month %in% c('2017-10', '2018-04'))
-news_b <- read.csv('https://ci-tweet-csv-dumps.s3.amazonaws.com/WEBHOSE-BASELINE.csv')
+  filter(!month %in% c('2017-10', '2018-04'))
+news_b <- read.csv('https://ci-tweet-csv-dumps.s3.amazonaws.com/WEBHOSE-BASELINE.csv') %>%
+  filter(!month %in% c('2017-10', '2018-04'))
 
 news_total <- sum(news_b$baseline)
 
@@ -50,8 +52,8 @@ ggplot(all) +
             aes(x=log(news_rate), y=log(twitter_rate), label=issue, hjust=hjusts)) +
   scale_x_continuous(labels=labelformat) + 
   scale_y_continuous(labels=labelformat) +
-  xlab('Rate of Keyword on Twitter (Log Scale)') + 
-  ylab('Rate of Keyword in Newspapers (Log Scale)') + 
+  ylab('Rate of Keyword on Twitter (Log Scale)') + 
+  xlab('Rate of Keyword in Newspapers (Log Scale)') + 
   theme_bw()
 
 ggsave('D:/Documents and Settings/mcooper/GitHub/aichi1/analysis/platform_compare.png', width=6, height=5)

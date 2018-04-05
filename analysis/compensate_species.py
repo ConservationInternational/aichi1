@@ -8,6 +8,10 @@ import datetime
 
 os.chdir('/home/ec2-user/aichi1/collect-twitter/')
 
+#print('Load geocoding resolver')
+resolver = carmen.get_resolver(order=['profile'])
+resolver.load_locations()
+
 issues = pd.read_csv('issues.csv', encoding='utf-8')
 issues_melt = pd.melt(issues.drop('google_topic_id', axis=1))
 issues_met = issues_melt.loc[issues_melt['value'] != 'XyEf9fAl2IuV6u97aM7a']
@@ -50,7 +54,7 @@ def increment(incDict, incStr, db):
 
 #Connect to MongoDB
 client = MongoClient('localhost', 27017)
-baselinecon = client.TWITTER['TWITTER-BASELINE_copy']
+baselinecon = client.TWITTER['TWITTER-BASELINE']
 
 for f in files:
     print(f)
