@@ -606,7 +606,7 @@ function setupMap(){
       bars
         .on("mouseover", function(d){
           d3.select(this)
-            .style("fill", colorRange[5]);
+            .attr("fill", colorRange[5]);
           tooltip
             .style("visibility", "visible")
             .text((d.fullname + ': ' +  Math.round(d.variable*10)/10).replace(/: 0$/, ": No Data"))
@@ -614,12 +614,12 @@ function setupMap(){
         .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
         .on("mouseout", function(d){
           d3.select(this)
-            .style("fill", color);
+            .attr("fill", color);
           tooltip
             .style("visibility", "hidden");
         })
-        .transition()
-        .duration(1500)
+ 	.transition()
+	.duration(1500)
         .attr('y', function(d) {
           return y(d.fullname);
         })
