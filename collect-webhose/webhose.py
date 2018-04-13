@@ -11,6 +11,10 @@ import pandas as pd
 import webhoseio
 import time
 from datetime import datetime, timedelta
+import boto3
+import json
+
+s3 = boto3.resource('s3')
 
 os.chdir('/home/ec2-user/aichi1/collect-webhose')
 
@@ -102,7 +106,6 @@ for wl in wordlists:
     while len(output['posts']) > 0:
         for i in output['posts']:
             if i['uuid'] not in uuids:
-                anytweet = True
                 country = i['thread']['country']
                 if country == 'KS':
                     country = 'KR'
@@ -112,9 +115,12 @@ for wl in wordlists:
                             row,lang = look_using_generator(issues, w)[0]
                             eng = issues.get_value(row, 'en')
                             increment({'country': country, 'month': month, 'day': day, 'issue': eng, 'language': lang}, 'count', detailcon)
-                            if anytweet:
-                                increment({'country': country, 'month': month, 'day': day}, 'any', baselinecon)
-                                anytweet = False
+                            increment({'country': country, 'month': month, 'day': day}, 'any', baselinecon)
+                            
+                            #Wrtie to bucket
+                            article = json.dumps(i, ensure_ascii=False).encode('utf8')
+                            s3.Bucket('catch-webhose').put_object(Key=lang + '_' + country + '_' + day + '_' + eng + '_' + i['uuid'], Body=article)
+
             uuids.append(i['uuid'])
         output = webhoseio.get_next()
 
