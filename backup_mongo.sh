@@ -39,13 +39,13 @@ TAR=$DEST/../$TIME.tar
 #echo "Backing up $HOST/$DBNAME to s3://$BUCKET/ on $TIME";
 
 # Dump from mongodb host into backup directory
-/usr/bin/mongodump -h $HOST -d $DBNAME -o $DEST
+/usr/bin/mongodump -h $HOST -d $DBNAME -o $DEST --quiet
 
 # Create tar of backup directory
-/bin/tar cvf $TAR -C $DEST .
+/bin/tar cf $TAR -C $DEST . 
 
 # Upload tar to s3
-/usr/bin/aws s3 cp $TAR s3://$BUCKET/
+/usr/bin/aws s3 cp $TAR s3://$BUCKET/ --quiet
 
 # Remove tar file locally
 /bin/rm -f $TAR
