@@ -102,8 +102,6 @@ for wl in wordlists:
 	query_params = {"q": q, "ts":start}
 	output = webhoseio.query("filterWebContent", query_params)  
 	while len(output['posts']) > 0:
-		print('once again: ' + str(len(output['posts'])))
-		output = webhoseio.get_next()
 		for i in output['posts']:
 			if i['uuid'] not in uuids:
 				anytweet = True
