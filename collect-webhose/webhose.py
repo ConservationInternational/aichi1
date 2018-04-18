@@ -98,6 +98,7 @@ countries = countries['alpha-2'].tolist()
 #See if it happens at the same spot.  UUIDs used to be 10365.  Run it again and see if UUIDs is the same length
 uuids = []
 for wl in wordlists:
+        d = {}
 	q = '("' + '" OR "'.join(wl) + '") published:>' + start + ' published:<' + stop + ' site_type:news'
 	query_params = {"q": q, "ts":start}
 	output = webhoseio.query("filterWebContent", query_params)  
@@ -117,11 +118,14 @@ for wl in wordlists:
 							if anytweet:
 								increment({'country': country, 'month': month, 'day': day}, 'any', baselinecon)
 								anytweet = False							
-								#Wrtie to bucket
-								article = json.dumps(i, ensure_ascii=False).encode('utf8')
-								s3.Bucket('catch-webhose').put_object(Key=lang + '_' + country + '_' + day + '_' + i['uuid'], Body=article)
+								#Append to dict to write
+                                                                article = json.dumps(i, ensure_ascii=False).encode('utf8')
+								d[lang + '_' + country + '_' + day + '_' + i['uuid']]=article
 			uuids.append(i['uuid'])
 		output = webhoseio.get_next()
+        #Wtie items in dict
+        for art in d:
+            s3.Bucket('catch-webhose').put_object(Key=art, Body=d[art])
 
 #print('Ended keyword search with ' + str(output['requestsLeft']) + ' available\n------------------------------')
 
