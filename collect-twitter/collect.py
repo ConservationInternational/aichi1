@@ -62,10 +62,6 @@ class StdOutListener(tweepy.StreamListener):
         month = now[:7]
         day = now[:10]
 
-        #Temporarily collect all tweets, so we can test geolocation on a random sample
-        if random.randint(1, 100) == 55:
-            s3.Bucket('catch-twitter-sample').put_object(Key=now, Body=data)
-
         out = json.loads(data)
         
         #Capture full spatial tweets to s3 bucket
