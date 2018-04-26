@@ -59,18 +59,9 @@ pairs.panels(log(all[ , c('Newspapers', 'Twitter', 'Google Trends')]),
              smooth = FALSE, ellipses = FALSE, method="spearman", rug=FALSE, 
              hist.col = '#888888', xaxt = "n", yaxt = "n")
 
-ggplot(all) + 
-  #geom_point(aes(x=log(news_rate), y=log(twitter_rate))) + 
-  geom_text(aes(x=log(news_rate), y=log(twitter_rate), label=country), size=3) +
-  scale_x_continuous(labels=labelformat) + 
-  scale_y_continuous(labels=labelformat) +
-  ylab('Tweets With Biodiversity Keywords (Log Scale)') + 
-  xlab('Newspaper Articles With Biodiversity Keywords (Log Scale)') + 
-  theme_bw()
-
-ggsave('D:/Documents and Settings/mcooper/GitHub/aichi1/analysis/country_compare.png', width=6, height=5)
-
-
-
+sel <- c()
+for (i in 1:10000){
+  sel <- c(sel, cor(runif(100), runif(100)))
+}
 
 
