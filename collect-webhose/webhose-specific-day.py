@@ -58,7 +58,7 @@ issues_melt = pd.melt(issues.drop('google_topic_id', axis=1))
 issues_melt = issues_melt.loc[issues_melt['value'] != 'XyEf9fAl2IuV6u97aM7a']
 
 
-for thetime in ['2018-04-13', '2018-04-14', '2018-04-15', '2018-04-16', '2018-04-17', '2018-04-18', '2018-04-19']:
+for thetime in ['2018-1-10', '2018-1-11']:
 ########################
 #Get times
 ########################
