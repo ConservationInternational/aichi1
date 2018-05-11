@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1522848977164.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1936018408",
+    "id" : "DDF0D6AE",
+    "lastKnownWriteTime" : 1522849152,
+    "last_content_update" : 1522849152772,
+    "path" : "D:/OneDrive/Collaborations/Matthew Cooper/Aichi1_monitor/Scripts/data_analysis_script_v1.R",
+    "project_path" : "Scripts/data_analysis_script_v1.R",
+    "properties" : {
+        "cursorPosition" : "28,0",
+        "scrollLine" : "13"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

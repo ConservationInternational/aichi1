@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1522849262410.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4219318703",
+    "id" : "137978CC",
+    "lastKnownWriteTime" : 1522884603,
+    "last_content_update" : 1522884603263,
+    "path" : "D:/OneDrive/Collaborations/Matthew Cooper/Aichi1_monitor/Scripts/data_analysis_pca_v1.R",
+    "project_path" : "Scripts/data_analysis_pca_v1.R",
+    "properties" : {
+        "cursorPosition" : "11,0",
+        "scrollLine" : "8"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

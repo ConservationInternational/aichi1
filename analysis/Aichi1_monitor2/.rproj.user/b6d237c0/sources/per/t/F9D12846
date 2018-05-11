@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1523178963700.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3981821764",
+    "id" : "F9D12846",
+    "lastKnownWriteTime" : 1523207343,
+    "last_content_update" : 1523207344840,
+    "path" : "D:/OneDrive/Collaborations/Matthew Cooper/Aichi1_monitor/Scripts/data_analysis_dens_v1.R",
+    "project_path" : "Scripts/data_analysis_dens_v1.R",
+    "properties" : {
+        "cursorPosition" : "14,0",
+        "scrollLine" : "3"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
