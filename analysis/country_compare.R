@@ -59,4 +59,12 @@ pairs.panels(log(all[ , c('Newspapers', 'Twitter', 'Google Trends')]),
              hist.col = '#888888', xaxt = "n", yaxt = "n")
 
 
+all <- all %>%
+  arrange(desc(Twitter)) %>%
+  mutate(Twitter_Rank = 1:n()) %>%
+  arrange(desc(Newspapers)) %>%
+  mutate(Newspapers_Rank = 1:n()) %>%
+  arrange(desc(`Google Trends`)) %>%
+  mutate(Trends_Rank = 1:n())
 
+all$Top20 <- rowSums(all[ , c("Twitter_Rank", "Newspapers_Rank", "Trends_Rank")] <= 20) >= 2
