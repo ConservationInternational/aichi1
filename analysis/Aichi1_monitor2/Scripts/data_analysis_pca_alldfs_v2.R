@@ -187,11 +187,10 @@ var_mean_ctr_filt<-var_mean_ctr[apply(var_mean_ctr[,3:5],1,function(x) all(x>0))
 head(var_mean_ctr_filt)
 
 #Corr plot
-figure3<-ggpairs(var_mean_ctr_filt[,3:5],columnLabels = c("Google Trends", "Twitter", "Newspapers"),
-                 axisLabels = 'none')
-figure3
-
-ggsave("Figure3.tiff",figure3,scale=2,width=10,height=8,units="cm",dpi=300)
+library(psych)
+pairs.panels(select(var_mean_ctr_filt, Newspapers=mean_wh_vol, Twitter=mean_tw_vol, `Google Trends`=mean_tr_vol),
+             smooth = FALSE, ellipses = FALSE, method="pearson", rug=FALSE, 
+             hist.col = '#888888', xaxt = "n", yaxt = "n")
 
 #Plot by issue
 var_mean_issue<-data.frame(issue=names(trends_sum_wide[,2:23]),
@@ -199,10 +198,24 @@ var_mean_issue<-data.frame(issue=names(trends_sum_wide[,2:23]),
                            mean_tw_vol=apply(twitter_sum_wide[,2:23],2,function(x) log10(mean(x)+1)),
                            mean_wh_vol=apply(webhose_sum_wide[,2:23],2,function(x) log10(mean(x)+1)))
 
+
+all <- select(var_mean_ctr_filt, Newspapers=mean_wh_vol, Twitter=mean_tw_vol, `Google Trends`=mean_tr_vol, country) %>%
+  arrange(desc(Twitter)) %>%
+  mutate(Twitter_Rank = 1:n()) %>%
+  arrange(desc(Newspapers)) %>%
+  mutate(Newspapers_Rank = 1:n()) %>%
+  arrange(desc(`Google Trends`)) %>%
+  mutate(Trends_Rank = 1:n())
+
+all$Top15 <- rowSums(all[ , c("Twitter_Rank", "Newspapers_Rank", "Trends_Rank")] <= 15) >= 2
+
+View(all)
+
+
 #Corr plot
-figure4<-ggpairs(var_mean_issue[,2:4],columnLabels = c("Google Trends", "Twitter", "Newspapers"),
-                 axisLabels="none")
-figure4
+pairs.panels(select(var_mean_issue, Newspapers=mean_wh_vol, Twitter=mean_tw_vol, `Google Trends`=mean_tr_vol),
+             smooth = FALSE, ellipses = FALSE, method="pearson", rug=FALSE, 
+             hist.col = '#888888', xaxt = "n", yaxt = "n")
 
 ggsave("Figure4.tiff",figure4,scale=2,width=10,height=8,units="cm",dpi=300)
 

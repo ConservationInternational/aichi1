@@ -95,6 +95,8 @@ weekdays <- all %>%
 
 weekdays$Weekday <- factor(weekdays$Weekday, levels=c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))
 
+write.csv(weekdays %>% spread(Platform, Score), '../weekday_scores.csv', row.names=F)
+
 ggplot(weekdays) + 
   geom_line(aes(x=Weekday, y=Score, group=Platform, color=Platform), size=1) + 
   ylab("Average Score") + 
