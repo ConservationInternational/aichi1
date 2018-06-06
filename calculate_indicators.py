@@ -78,5 +78,9 @@ comb = pd.merge(comb, countries, how='inner', on=['country'])
 
 comb = comb[comb.month != '2017-10']
 
+cm = pd.read_csv('country-month.csv', na_filter=False)
+
+comb = pd.merge(comb, cm, how='outer', on=['month', 'country'])
+
 comb.to_csv('myapp/public/indicator.csv', index=False)
 

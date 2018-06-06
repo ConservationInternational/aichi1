@@ -579,6 +579,8 @@ function setupMap(){
         .duration(1500)
         .call(yAxis);
 
+      console.log(bardata);
+
       bars.each(function(d){
            var variable = bardata.filter(function(cc){
              return cc.country == d.country;

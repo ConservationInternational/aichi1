@@ -7,7 +7,7 @@ sleep 10
 
 start=`aws s3 ls geo-raw/$today/ | wc -l`
 
-sleep 60
+sleep 600
 
 stop=`aws s3 ls geo-raw/$today/ | wc -l`
 
