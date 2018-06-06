@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1525620920975.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1078918435",
+    "id" : "CABAD485",
+    "lastKnownWriteTime" : 1525713109,
+    "last_content_update" : 1525713109962,
+    "path" : "D:/OneDrive/Collaborations/Matthew Cooper/Aichi1_monitor/Scripts/data_analysis_pca_alldfs_v1.R",
+    "project_path" : "Scripts/data_analysis_pca_alldfs_v1.R",
+    "properties" : {
+        "cursorPosition" : "200,0",
+        "scrollLine" : "189"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

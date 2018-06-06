@@ -1,0 +1,150 @@
+#Load relevant packages for data extraction
+library(tidyverse)
+library(ggplot2)
+library(tidygraph)
+library(ggraph)
+library(countrycode)
+library(RColorBrewer)
+library(ggpubr)
+
+####Open data files
+#Trends
+trends_df<-read.csv("Data/TRENDS.csv")
+head(trends_df)
+str(trends_df)
+
+#Sort data for analysis
+trends_df$country<-as.character(trends_df$country)
+trends_wide<-spread(trends_df,country,rate)
+trends_wide<-trends_wide[,c(4:251)]
+trends_wide<-trends_wide[,which(colSums(trends_wide)>0)]
+head(trends_wide)
+
+#Calculate correlation scores between country-level Google Trends volume for all terms
+corMat_trends <- trends_wide %>%
+  correlate() %>%
+  shave(upper = TRUE) %>%
+  stretch(na.rm = TRUE)
+
+#Check the distribution of correlation scores
+corr_trends<-ggplot(corMat_trends,aes(x=r))
+corr_trends<-corr_trends+geom_histogram(binwidth=0.05,center=0.025)
+corr_trends<-corr_trends+scale_x_continuous(labels=seq(-0.4,1,0.1),breaks=seq(-0.4,1,0.1))
+corr_trends
+#This clearly shows that most countries show unrelated trends
+#But a few show strong correlations (r >= 0.5)
+#Lets quantify these relationships and plot their network
+
+#Select only strong correlation scores (r >= 0.5)
+corMat_trends_05 <- corMat_trends %>% filter(r >= 0.5)
+
+#Percentage of strong country correlations
+(nrow(corMat_trends_05)/nrow(corMat_trends))*100
+
+#Associate countries with continents and create
+unique_ctr<-unique(c(as.character(corMat_trends_05$x),as.character(corMat_trends_05$y)))
+country_data<-data.frame(ctr_names_iso2=unique_ctr,
+                         ctr_names_full=countrycode(unique_ctr, 'iso2c', 'country.name'),
+                         continent=countrycode(unique_ctr, 'iso2c', 'continent'),
+                         mean_srchvol=colMeans(trends_wide[,colnames(trends_wide) %in% unique_ctr]),
+                         stringsAsFactors=F)
+country_data$continent<-as.factor(country_data$continent)
+
+####Network analysis Google Trends
+#Create igraph object
+cor.graph_trends <- tbl_graph(corMat_trends_05, directed = FALSE, nodes=country_data)
+#Define the size of each node
+V(cor.graph_trends)$size <- 6
+#Define the color of the frame
+V(cor.graph_trends)$frame.color <- "white"
+#Define the color of each node
+cols<-brewer.pal(5, "Spectral")
+V(cor.graph_trends)$color <- cols[V(cor.graph_trends)$continent]
+#Define node labels
+V(cor.graph_trends)$label <- V(cor.graph_trends)$ctr_names_full
+#Define arrow type
+E(cor.graph_trends)$arrow.mode <- 0
+#Define layout
+l <- layout_in_circle(cor.graph_trends, order=order(V(cor.graph_trends)$continent,V(cor.graph_trends)$ctr_names_iso2))
+#Define label position
+radian.rescale <- function(x, start=0, direction=1) {
+  c.rotate <- function(x) (x + start) %% (2 * pi) * direction
+  c.rotate(ggbio::rescale(x, c(0, 2 * pi), range(x)))
+}
+lab.locs <- radian.rescale(x=1:nrow(l), direction=-1, start=0)
+plot(cor.graph_trends, layout=l, vertex.label.color="black", vertex.label.cex=0.7)
+
+
+#Twitter-Baseline
+twitter_df<-read.csv("Data/TWITTER-BASELINE.csv")
+head(twitter_df)
+str(twitter_df)
+
+#Webhose-Baseline
+webhose_df<-read.csv("WEBHOSE-BASELINE.csv")
+head(webhose_df)
+
+
+#Twitter
+twitter_df$country<-as.character(twitter_df$country)
+twitter_df<-twitter_df %>% group_by(country,month) %>% summarize(any=sum(any),baseline=sum(baseline))
+twitter_df<-as.data.frame(twitter_df)
+twitter_df$perc<-(twitter_df$any/twitter_df$baseline)*100
+twitter_df<-twitter_df[,c(1:2,5)]
+twitter_df$perc[is.na(twitter_df$perc)]<-0
+twitter_wide<-spread(twitter_df,country,perc)
+twitter_wide<-twitter_wide[,c(2:249)]
+head(twitter_wide)
+
+#webhose
+webhose_df$country<-as.character(webhose_df$country)
+webhose_df<-webhose_df %>% group_by(country,month) %>% summarize(any=sum(any),baseline=sum(baseline))
+webhose_df<-as.data.frame(webhose_df)
+webhose_df$perc<-(webhose_df$any/webhose_df$baseline)*100
+webhose_df<-webhose_df[,c(1:2,5)]
+webhose_df$perc[is.na(webhose_df$perc)]<-0
+webhose_wide<-spread(webhose_df,country,perc)
+webhose_wide<-webhose_wide[,c(2:212)]
+head(webhose_wide)
+
+
+
+
+#Network analysis twitter
+corMat_twitter <- twitter_wide %>%
+  correlate() %>%
+  shave(upper = TRUE) %>%
+  stretch(na.rm = TRUE) %>%
+  filter(r >= 0.5)
+
+set.seed(1)
+cor.graph_twitter <- as_tbl_graph(corMat_twitter, directed = FALSE)
+cor.graph_twitter %>%
+  activate(nodes) %>%
+  mutate(centrality = centrality_authority()) %>% 
+  ggraph(layout = "graphopt") + 
+  geom_edge_link(width = 1, colour = "lightgray") +
+  geom_node_point(aes(size = centrality, colour = centrality)) +
+  geom_node_text(aes(label = name), repel = TRUE)+
+  scale_color_gradient(low = "yellow", high = "red")+
+  theme_graph()
+
+
+#Network analysis webhose
+corMat_webhose <- webhose_wide %>%
+  correlate() %>%
+  shave(upper = TRUE) %>%
+  stretch(na.rm = TRUE) %>%
+  filter(r >= 0.5)
+
+set.seed(1)
+cor.graph_webhose <- as_tbl_graph(corMat_webhose, directed = FALSE)
+cor.graph_webhose %>%
+  activate(nodes) %>%
+  mutate(centrality = centrality_authority()) %>% 
+  ggraph(layout = "graphopt") + 
+  geom_edge_link(width = 1, colour = "lightgray") +
+  geom_node_point(aes(size = centrality, colour = centrality)) +
+  geom_node_text(aes(label = name), repel = TRUE)+
+  scale_color_gradient(low = "yellow", high = "red")+
+  theme_graph()

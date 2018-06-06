@@ -1,5 +1,6 @@
 library(dplyr)
 library(ggplot2)
+library(ggrepel)
 
 #twitter
 twit_d <- read.csv('https://ci-tweet-csv-dumps.s3.amazonaws.com/TWITTER-DETAIL.csv') %>%
@@ -20,7 +21,7 @@ news_d <- read.csv('https://ci-tweet-csv-dumps.s3.amazonaws.com/WEBHOSE-DETAIL.c
 news_b <- read.csv('https://ci-tweet-csv-dumps.s3.amazonaws.com/WEBHOSE-BASELINE.csv') %>%
   filter(!month %in% c('2017-10', '2018-04'))
 
-news_total <- sum(news_b$baseline)
+news_total <- sum(news_b$baseline, na.rm=T)
 
 news_d <- news_d %>%
   group_by(issue) %>%
@@ -37,26 +38,30 @@ labelformat <- function(x){
   paste0(signif(exp(x)*100, 2), '%')
 }
 
-labelissues <- c('climate change', 'biodiversity',
-                 'deforestation', 'protected area',
-                 'species diversity', 'keystone species',
-                 'habitat fragmentation')
+labelissues <- c("biodiversity", 
+                 "biosphere", "climate change", "deforestation", "desertification", 
+                 "ecology", "ecosystem service", "endangered species", "endemic species", 
+                 "extinction", "genetic diversity", "habitat destruction", "habitat fragmentation", 
+                 "invasive species", "keystone species", "natural capital", "ocean acidification", 
+                 "protected area", "species diversity", "subspecies", "sustainability", 
+                 "wildlife trade")
 
-hjusts <- c(0, 0, 0, 0, 0, 0, 1)
+#climate change, sustainability, extinction, biodiversity, and ecology, while 
+#the least popular keywords were endemic species, ocean acidification, habitat destruction, keystone species, and habitat fragmentation. 
+
 
 ggplot(all) + 
   geom_point(aes(x=log(news_rate), y=log(twitter_rate))) + 
-  geom_text(data=all %>% 
-              filter(issue %in% labelissues) %>%
-              mutate(hjusts=hjusts, issue=paste0(' ', issue, ' ')),
-            aes(x=log(news_rate), y=log(twitter_rate), label=issue, hjust=hjusts)) +
+  geom_text_repel(data=all %>% 
+              filter(issue %in% labelissues),
+            aes(x=log(news_rate), y=log(twitter_rate), label=issue)) +
   scale_x_continuous(labels=labelformat) + 
   scale_y_continuous(labels=labelformat) +
   ylab('Rate of Keyword on Twitter (Log Scale)') + 
   xlab('Rate of Keyword in Newspapers (Log Scale)') + 
   theme_bw()
 
-ggsave('D:/Documents and Settings/mcooper/GitHub/aichi1/analysis/keyword_frequency_compare.png', width=6, height=5)
+ggsave('D:/Documents and Settings/mcooper/GitHub/aichi1/analysis/keyword_frequency_compare.png', width=9, height=7.5)
 
 
 

@@ -14,6 +14,7 @@ countries = pd.read_csv("../countries.csv", encoding='utf-8', na_filter=False)
 
 #Manually create timeframe like this:
 timeframe = '2017-11-01 2018-04-30'
+countries.columns = ['country', 'ISO2']
 
 pytrends = TrendReq(hl='en-US', tz=360)
 
@@ -29,5 +30,13 @@ for i in range(0,len(kw_list)):
     out.columns = ['score', 'date', 'keyword']
     
     all = pd.concat([all, out])
+	pytrends.build_payload([kw_list[i]], timeframe=timeframe, cat=0, geo='', gprop='')
+	out = pytrends.interest_by_region(resolution='COUNTRY')
+	out['country'] = out.index
+	out['keyword'] = keyword[i]
+	out.columns = ['score', 'country', 'keyword']
+	all = pd.concat([all, out])
 
+all = pd.merge(all, countries)
+	
 all.to_csv('../myapp/public/csvs/DAILYTRENDS.csv', index=False)
