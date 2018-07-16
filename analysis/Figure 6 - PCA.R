@@ -230,4 +230,4 @@ var.plot<-ggpar(var.plot,
 var.plot
 
 #Save
-ggsave("C://Git/aichi1/analysis/Appendix 3.tiff", var.plot, scale=1.5, width=10,height=10,units="cm",dpi=300)
+ggsave("C://Git/aichi1/analysis/Appendix 3.tiff", var.plot, scale=1.5, width=25,height=25,units="cm",dpi=300)
