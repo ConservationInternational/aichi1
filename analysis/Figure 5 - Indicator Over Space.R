@@ -4,6 +4,7 @@ library(countrycode)
 library(geojsonio)
 library(viridis)
 library(ggplot2)
+library(cowplot)
 
 ######################################
 #Process and Edit Data
@@ -160,6 +161,9 @@ all_sum_wide <- spread(all_sum,issue,mean_rvol)
 all_mean_ctr <- data.frame(country=all_sum_wide[,1],
                            mean_rvol=apply(all_sum_wide[,2:23],1,mean))
 
+all_mean_ctr_adj <- all_mean_ctr
+all_mean_ctr_adj[all_mean_ctr_adj < 0.15] <- 0.15151515
+
 sp <- geojson_read('G:/My Drive/CI Docs/Aichi 1 Indicator/WorldMaps/gadm28_adm0_low.json', what="sp")
 
 sp <- sp[sp$NAME_ENGLI != "Antarctica", ]
@@ -170,7 +174,7 @@ dat <- cbind(fort, sp@data[fort$id, ])
 
 dat$orig_order <- 1:nrow(dat)
 
-dat <- merge(dat, all_mean_ctr, by.x="ISO2", by.y="country", all.x=T, all.y=F)
+dat <- merge(dat, all_mean_ctr_adj, by.x="ISO2", by.y="country", all.x=T, all.y=F)
 
 dat <- dat[order(dat$orig_order), ]
 
@@ -178,7 +182,8 @@ names(dat)[names(dat) == 'mean_rvol'] <- "Overall Score"
 
 ggplot(dat, aes(long, lat, group=group)) + 
   geom_polygon(aes(fill=`Overall Score`), color="black") + 
-  scale_fill_viridis(name="Overall Score", na.value="grey") +
+  scale_fill_viridis(name="Overall Score", na.value="grey", 
+                     guide=guide_colorbar(title.position="top", title.hjust = 0.5)) +
   scale_x_continuous(expand = c(0.0,0)) +
   scale_y_continuous(expand = c(0.0,0))  + 
   labs(fill = 'Overall Score') + 
@@ -188,5 +193,81 @@ ggplot(dat, aes(long, lat, group=group)) +
         axis.title.y=element_blank(),
         panel.border=element_blank(),panel.grid.major=element_blank(),
         panel.grid.minor=element_blank(),plot.background=element_blank(),
-        panel.background=element_rect(fill="#FFFFFF"))
+        panel.background=element_rect(fill="#FFFFFF"),
+        legend.position="bottom",
+        legend.key.width=unit(2,"cm"))
 ggsave('C://Git/aichi1/analysis/Figure 5 - Indicator over Space.png', height=3, width=8)
+
+##Just plot climate change
+cc <- all_df %>%
+  filter(issue == 'climate change')
+
+dat_cc <- cbind(fort, sp@data[fort$id, ])
+
+dat_cc$orig_order <- 1:nrow(dat_cc)
+
+dat_cc <- merge(dat_cc, cc, by.x="ISO2", by.y="country", all.x=T, all.y=F)
+
+dat_cc <- dat_cc[order(dat_cc$orig_order), ]
+
+names(dat_cc)[names(dat_cc) == 'mean_rvol'] <- "Overall Score"
+
+clim <- ggplot(dat_cc, aes(long, lat, group=group)) + 
+  geom_polygon(aes(fill=log(`Overall Score`)), color="black") + 
+  scale_fill_viridis(name="Climate Change", na.value="grey", 
+                     labels=function(x) signif(exp(x), 2),
+                     guide=guide_colorbar(title.position="top", title.hjust = 0.5)#,
+                     #low = "#132B43", high = "#56B1F7"
+                     ) +
+  scale_x_continuous(expand = c(0.0,0)) +
+  scale_y_continuous(expand = c(0.0,0))  + 
+  labs(fill = 'Overall Score') + 
+  theme(axis.line=element_blank(),axis.text.x=element_blank(),
+        axis.text.y=element_blank(),axis.ticks=element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        panel.border=element_blank(),panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank(),plot.background=element_blank(),
+        panel.background=element_rect(fill="#FFFFFF"),
+        legend.position="bottom",
+        legend.justification="center",
+        legend.key.width=unit(2,"cm"))
+
+##Just plot endangered species
+endangeredspecies <- all_df %>%
+  filter(issue == 'endangered species')
+
+dat_end <- cbind(fort, sp@data[fort$id, ])
+
+dat_end$orig_order <- 1:nrow(dat_end)
+
+dat_end <- merge(dat_end, endangeredspecies, by.x="ISO2", by.y="country", all.x=T, all.y=F)
+
+dat_end <- dat_end[order(dat_end$orig_order), ]
+
+names(dat_end)[names(dat_end) == 'mean_rvol'] <- "Overall Score"
+
+endang <- ggplot(dat_end, aes(long, lat, group=group)) + 
+  geom_polygon(aes(fill=log(`Overall Score`)), color="black") + 
+  scale_fill_viridis(name="Endangered Species", na.value="grey", 
+                     labels=function(x) signif(exp(x), 2),
+                     guide=guide_colorbar(title.position="top", title.hjust = 0.5)#,
+                     #low = "#132B43", high = "#56B1F7"
+                     ) +
+  scale_x_continuous(expand = c(0.0,0)) +
+  scale_y_continuous(expand = c(0.0,0))  + 
+  labs(fill = 'Overall Score') + 
+  theme(axis.line=element_blank(),axis.text.x=element_blank(),
+        axis.text.y=element_blank(),axis.ticks=element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        panel.border=element_blank(),panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank(),plot.background=element_blank(),
+        panel.background=element_rect(fill="#FFFFFF"),
+        legend.position="bottom",
+        legend.justification="center",
+        legend.key.width=unit(2,"cm"))
+
+plot_grid(clim, endang, labels="AUTO")
+
+ggsave('C://Git/aichi1/analysis/Figure 5 - Keywords Over Space.png', height=6, width=20)
