@@ -13,7 +13,7 @@ keyword = data['en'].tolist()
 countries = pd.read_csv("../countries.csv", encoding='utf-8', na_filter=False)
 
 #Manually create timeframe like this:
-timeframe = '2017-11-01 2018-04-30'
+timeframe = '2017-11-01 2018-07-10'
 
 pytrends = TrendReq(hl='en-US', tz=360)
 

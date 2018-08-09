@@ -58,7 +58,7 @@ issues_melt = pd.melt(issues.drop('google_topic_id', axis=1))
 issues_melt = issues_melt.loc[issues_melt['value'] != 'XyEf9fAl2IuV6u97aM7a']
 
 
-for thetime in ['2018-1-10', '2018-1-11']:
+for thetime in ['2018-6-13', '2018-6-14', '2018-6-21', '2018-6-22','2018-7-5', '2018-7-6', '2018-7-8', '2018-7-11', '2018-7-12']:
 ########################
 #Get times
 ########################
@@ -104,7 +104,7 @@ for thetime in ['2018-1-10', '2018-1-11']:
     uuids = []
     for wl in wordlists:
         q = '("' + '" OR "'.join(wl) + '") published:>' + start + ' published:<' + stop + ' site_type:news'
-        query_params = {"q": q, "ts":start}
+        query_params = {"q": q, "ts":1528738667509}
         output = webhoseio.query("filterWebContent", query_params)
         print('We got ' + str(len(output['posts'])) + ' results')
         if wordlists.index(wl) == 0:

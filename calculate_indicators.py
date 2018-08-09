@@ -33,7 +33,13 @@ for doc in cursor:
 
 #Get News Data in JSON
 news = []
-cursor = newscon.aggregate([{"$group" : {"_id": {"month" : '$month', "country": "$country"}, "basecount" : {"$sum" : '$baseline'},"anycount" : {"$sum": "$any"}}},
+cursor = newscon.aggregate([{"$group" : {"_id": {"month" : '$month', "country": "$country"}, 
+                                         "basecount" : {"$sum" : '$baseline'},
+                                         "anycount" : {"$sum": "$any"}}},
+                            {"$project" : {"basecount" : "$basecount", 
+                                           "anycount" : "$anycount",
+                                           "cmp_value" : {"$cmp" : ["$basecount", "$anycount"]}}},
+                            {"$match" : {"cmp_value" : {"$gte" : 0 }}},
                             {"$project" : {'news' : { "$divide": ["$anycount", "$basecount"]}}}])
 for doc in cursor:
     news.append({'country' : doc['_id']['country'],
