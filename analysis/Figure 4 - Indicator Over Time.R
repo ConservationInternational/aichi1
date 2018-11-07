@@ -12,22 +12,38 @@ library(pracma)
 ############################################
 
 trends <- read.csv('http://biodiversityengagementindicator.com/csvs/DAILYTRENDS.csv',
-                   stringsAsFactors=F) %>%
-  mutate(day = ymd(date)) %>%
-  group_by(day) %>%
-  summarize(`Google Trends` = mean(score))
+                   stringsAsFactors=F) 
+twit <- read.csv('http://biodiversityengagementindicator.com/csvs/TWITTER-DETAIL.csv')
+twit_baseline <- read.csv('http://biodiversityengagementindicator.com/csvs/TWITTER-BASELINE.csv')
+news <- read.csv('http://biodiversityengagementindicator.com/csvs/WEBHOSE-DETAIL.csv')
+news_baseline <- read.csv('http://biodiversityengagementindicator.com/csvs/WEBHOSE-BASELINE.csv')
 
-twit <- read.csv('http://biodiversityengagementindicator.com/csvs/TWITTER-DETAIL.csv') %>%
+news_overall <- news %>%
   mutate(day = ymd(day)) %>%
   group_by(day, issue) %>%
   summarize(count = sum(count))
 
-twit_baseline <- read.csv('http://biodiversityengagementindicator.com/csvs/TWITTER-BASELINE.csv') %>%
+news_baseline_overall <- news_baseline %>%
   mutate(day = ymd(day)) %>%
   group_by(day) %>%
   summarize(baseline = sum(baseline))
 
-twit_all <- merge(twit, twit_baseline) %>%
+trends_overall <- trends %>%
+  mutate(day = ymd(date)) %>%
+  group_by(day) %>%
+  summarize(`Google Trends` = mean(score))
+
+twit_overall <- twit %>%
+  mutate(day = ymd(day)) %>%
+  group_by(day, issue) %>%
+  summarize(count = sum(count))
+
+twit_baseline_overall <- twit_baseline %>%
+  mutate(day = ymd(day)) %>%
+  group_by(day) %>%
+  summarize(baseline = sum(baseline))
+
+twit_all_overall <- merge(twit_overall, twit_baseline_overall) %>%
   mutate(rate = count/baseline) %>%
   group_by(issue) %>%
   mutate(max=max(rate)) %>%
@@ -35,18 +51,8 @@ twit_all <- merge(twit, twit_baseline) %>%
   mutate(score = (rate/max)*100) %>%
   group_by(day) %>%
   summarize(Twitter = mean(score))
-  
-news <- read.csv('http://biodiversityengagementindicator.com/csvs/WEBHOSE-DETAIL.csv') %>%
-  mutate(day = ymd(day)) %>%
-  group_by(day, issue) %>%
-  summarize(count = sum(count))
 
-news_baseline <- read.csv('http://biodiversityengagementindicator.com/csvs/WEBHOSE-BASELINE.csv') %>%
-  mutate(day = ymd(day)) %>%
-  group_by(day) %>%
-  summarize(baseline = sum(baseline))
-
-news_all <- merge(news, news_baseline) %>%
+news_all_overall <- merge(news_overall, news_baseline_overall) %>%
   mutate(rate = count/baseline) %>%
   group_by(issue) %>%
   mutate(max=max(rate, na.rm=T)) %>%
@@ -55,7 +61,7 @@ news_all <- merge(news, news_baseline) %>%
   group_by(day) %>%
   summarize(Newspapers = mean(score, na.rm=T))
 
-all <- Reduce(merge, list(twit_all, news_all, trends)) %>%
+all_overall <- Reduce(merge, list(twit_all_overall, news_all_overall, trends_overall)) %>%
   mutate(`Overall Score` = (Twitter + Newspapers + `Google Trends`)/3) %>%
   gather(Platform, score, -day) %>%
   na.omit
@@ -66,12 +72,12 @@ datelabel <- function(d){
 
 brks <- seq(ymd('2017-11-01'), ymd('2018-11-01'), 'months')
 
-all$Platform <- factor(all$Platform, levels=c("Google Trends", "Twitter", "Newspapers", "Overall Score"))
+all_overall$Platform <- factor(all_overall$Platform, levels=c("Google Trends", "Twitter", "Newspapers", "Overall Score"))
 
-all <- all %>%
+all_overall <- all_overall %>%
   filter(Platform != "Overall Score")
 
-overall <- ggplot(all) + geom_line(aes(x=day, y=score), size = 0.75) + 
+overall <- ggplot(all_overall) + geom_line(aes(x=day, y=score), size = 0.75) + 
   scale_y_continuous() + 
   scale_x_date(breaks = brks, labels=datelabel) + 
   theme_bw() + 
@@ -100,25 +106,24 @@ ggplot(weekdays) +
 
 kw <- 'biodiversity'
 
-trends <- read.csv('C://Git/aichi1/DAILYTRENDS-Stitch.csv',
-                   stringsAsFactors=F) %>%
+trends_bio <- trends %>%
   filter(keyword==kw) %>%
   mutate(day = ymd(date)) %>%
   group_by(day) %>%
   summarize(`Google Trends` = mean(score))
 
-twit <- read.csv('http://biodiversityengagementindicator.com/csvs/TWITTER-DETAIL.csv') %>%
+twit_bio <- twit %>%
   mutate(day = ymd(day)) %>%
   filter(issue==kw) %>%
   group_by(day, issue) %>%
   summarize(count = sum(count))
 
-twit_baseline <- read.csv('http://biodiversityengagementindicator.com/csvs/TWITTER-BASELINE.csv') %>%
+twit_baseline_bio <- twit_baseline %>%
   mutate(day = ymd(day)) %>%
   group_by(day) %>%
   summarize(baseline = sum(baseline))
 
-twit_all <- merge(twit, twit_baseline) %>%
+twit_all_bio <- merge(twit_bio, twit_baseline_bio) %>%
   mutate(rate = count/baseline) %>%
   group_by(issue) %>%
   mutate(max=max(rate)) %>%
@@ -127,18 +132,18 @@ twit_all <- merge(twit, twit_baseline) %>%
   group_by(day) %>%
   summarize(Twitter = mean(score))
 
-news <- read.csv('http://biodiversityengagementindicator.com/csvs/WEBHOSE-DETAIL.csv') %>%
+news_bio <- news %>%
   mutate(day = ymd(day)) %>%
   filter(issue == kw) %>%
   group_by(day, issue) %>%
   summarize(count = sum(count))
 
-news_baseline <- read.csv('http://biodiversityengagementindicator.com/csvs/WEBHOSE-BASELINE.csv') %>%
+news_baseline_bio <- news_baseline %>%
   mutate(day = ymd(day)) %>%
   group_by(day) %>%
   summarize(baseline = sum(baseline))
 
-news_all <- merge(news, news_baseline) %>%
+news_all_bio <- merge(news_bio, news_baseline_bio) %>%
   mutate(rate = count/baseline) %>%
   group_by(issue) %>%
   mutate(max=max(rate, na.rm=T)) %>%
@@ -147,7 +152,7 @@ news_all <- merge(news, news_baseline) %>%
   group_by(day) %>%
   summarize(Newspapers = mean(score, na.rm=T))
 
-all <- Reduce(merge, list(twit_all, news_all, trends)) %>%
+all_bio <- Reduce(merge, list(twit_all_bio, news_all_bio, trends_bio)) %>%
   mutate(`Overall Score` = (Twitter + Newspapers + `Google Trends`)/3) %>%
   gather(Platform, score, -day) %>%
   na.omit
@@ -158,19 +163,19 @@ datelabel <- function(d){
 
 brks <- seq(ymd('2017-11-01'), ymd('2018-11-01'), 'months')
 
-all$Platform <- factor(all$Platform, levels=c("Google Trends", "Twitter", "Newspapers", "Overall Score"))
+all_bio$Platform <- factor(all_bio$Platform, levels=c("Google Trends", "Twitter", "Newspapers", "Overall Score"))
 
-all <- all %>%
+all_bio <- all_bio %>%
   filter(Platform != "Overall Score")
 
-bio <- ggplot(all) + geom_line(aes(x=day, y=score), size = 0.75) + 
+bio <- ggplot(all_bio) + geom_line(aes(x=day, y=score), size = 0.75) + 
   scale_y_continuous() + 
   scale_x_date(breaks = brks, labels=datelabel) + 
   theme_bw() + 
   xlab('Date') + ylab('Indicator Score') + 
   geom_vline(xintercept = ymd("2018-05-22"), linetype=2) + 
   facet_grid(Platform~.) + 
-  ggtitle("Indicator for Biodiversity Over Time, by Platform")
+  ggtitle('Indicator for "Biodiversity" Over Time, by Platform')
 
 ########################################
 #Indicator for Climate Change
@@ -178,25 +183,24 @@ bio <- ggplot(all) + geom_line(aes(x=day, y=score), size = 0.75) +
 
 kw <- 'climate change'
 
-trends <- read.csv('C://Git/aichi1/DAILYTRENDS-Stitch.csv',
-                   stringsAsFactors=F) %>%
+trends_cc <- trends %>%
   filter(keyword==kw) %>%
   mutate(day = ymd(date)) %>%
   group_by(day) %>%
   summarize(`Google Trends` = mean(score))
 
-twit <- read.csv('http://biodiversityengagementindicator.com/csvs/TWITTER-DETAIL.csv') %>%
+twit_cc <- twit %>%
   mutate(day = ymd(day)) %>%
   filter(issue==kw) %>%
   group_by(day, issue) %>%
   summarize(count = sum(count))
 
-twit_baseline <- read.csv('http://biodiversityengagementindicator.com/csvs/TWITTER-BASELINE.csv') %>%
+twit_baseline_cc <- twit_baseline %>%
   mutate(day = ymd(day)) %>%
   group_by(day) %>%
   summarize(baseline = sum(baseline))
 
-twit_all <- merge(twit, twit_baseline) %>%
+twit_all_cc <- merge(twit_cc, twit_baseline_cc) %>%
   mutate(rate = count/baseline) %>%
   group_by(issue) %>%
   mutate(max=max(rate)) %>%
@@ -205,18 +209,18 @@ twit_all <- merge(twit, twit_baseline) %>%
   group_by(day) %>%
   summarize(Twitter = mean(score))
 
-news <- read.csv('http://biodiversityengagementindicator.com/csvs/WEBHOSE-DETAIL.csv') %>%
+news_cc <- news %>%
   mutate(day = ymd(day)) %>%
   filter(issue == kw) %>%
   group_by(day, issue) %>%
   summarize(count = sum(count))
 
-news_baseline <- read.csv('http://biodiversityengagementindicator.com/csvs/WEBHOSE-BASELINE.csv') %>%
+news_baseline_cc <- news_baseline %>%
   mutate(day = ymd(day)) %>%
   group_by(day) %>%
   summarize(baseline = sum(baseline))
 
-news_all <- merge(news, news_baseline) %>%
+news_all_cc <- merge(news_cc, news_baseline_cc) %>%
   mutate(rate = count/baseline) %>%
   group_by(issue) %>%
   mutate(max=max(rate, na.rm=T)) %>%
@@ -225,7 +229,7 @@ news_all <- merge(news, news_baseline) %>%
   group_by(day) %>%
   summarize(Newspapers = mean(score, na.rm=T))
 
-all <- Reduce(merge, list(twit_all, news_all, trends)) %>%
+all_cc <- Reduce(merge, list(twit_all_cc, news_all_cc, trends_cc)) %>%
   mutate(`Overall Score` = (Twitter + Newspapers + `Google Trends`)/3) %>%
   gather(Platform, score, -day) %>%
   na.omit
@@ -236,22 +240,23 @@ datelabel <- function(d){
 
 brks <- seq(ymd('2017-11-01'), ymd('2018-11-01'), 'months')
 
-all$Platform <- factor(all$Platform, levels=c("Google Trends", "Twitter", "Newspapers", "Overall Score"))
+all_cc$Platform <- factor(all_cc$Platform, levels=c("Google Trends", "Twitter", "Newspapers", "Overall Score"))
 
-all <- all %>%
+all_cc <- all_cc %>%
   filter(Platform != "Overall Score")
 
-bio <- ggplot(all) + geom_line(aes(x=day, y=score), size = 0.75) + 
+cc <- ggplot(all_cc) + geom_line(aes(x=day, y=score), size = 0.75) + 
   scale_y_continuous() + 
   scale_x_date(breaks = brks, labels=datelabel) + 
   theme_bw() + 
   xlab('Date') + ylab('Indicator Score') + 
-  geom_vline(xintercept = ymd("2018-05-22"), linetype=2) + 
+  geom_vline(xintercept = ymd("2018-10-08"), linetype=2) + 
   facet_grid(Platform~.) + 
-  ggtitle("Indicator for Biodiversity Over Time, by Platform")
+  ggtitle('Indicator for "Climate Change" Over Time, by Platform')
 
+####################################
+#Combine
+###################################
+plot_grid(overall, bio, cc, labels="AUTO", nrow=3)
 
-
-
-
-ggsave('C://Git/aichi1/analysis/Figure 4 - Indicator Over Time.png', height=4, width=9)
+ggsave('C://Git/aichi1/analysis/Figure 4 - Indicator Over Time.png', height=12, width=9)
