@@ -12,7 +12,7 @@ pytrends = TrendReq(hl='en-US', tz=360)
 all = pd.DataFrame({})
 
 #Manually create timeframe like this:
-timeframe = '2017-11-01 2018-04-30'
+timeframe = '2017-11-01 2018-05-30'
 
 for i in range(0,len(kw_list)):
     pytrends.build_payload([kw_list[i]], timeframe=timeframe, cat=0, geo='', gprop='')
@@ -23,11 +23,13 @@ for i in range(0,len(kw_list)):
     out = out.drop(['isPartial'], axis=1)
     
     out.columns = ['score', 'date', 'keyword']
+	
+	out['range'] = 'First'
          
     all = pd.concat([all, out])
 
 #Manually create timeframe like this:
-timeframe = '2018-05-01 2018-10-31'
+timeframe = '2018-04-01 2018-10-31'
 
 for i in range(0,len(kw_list)):
     pytrends.build_payload([kw_list[i]], timeframe=timeframe, cat=0, geo='', gprop='')
@@ -39,9 +41,14 @@ for i in range(0,len(kw_list)):
     
     out.columns = ['score', 'date', 'keyword']
          
+	out['range'] = 'Second'
+	
     all = pd.concat([all, out])
 
 all.to_csv('DAILYTRENDS.csv', index=False)
 
 all.to_csv('~/aichi1/myapp/public/csvs/DAILYTRENDS.csv', index=False)
 
+1nDerGrosseWolke!
+
+eIXDD#BE][7B

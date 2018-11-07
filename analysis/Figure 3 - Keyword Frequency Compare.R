@@ -14,8 +14,8 @@ twit_d <- twit_d %>%
   mutate(twitter_rate = twitter_count/twit_total)
 
 #newspapers
-news_d <- read.csv('https://ci-tweet-csv-dumps.s3.amazonaws.com/WEBHOSE-DETAIL.csv')
-news_b <- read.csv('https://ci-tweet-csv-dumps.s3.amazonaws.com/WEBHOSE-BASELINE.csv')
+news_d <- read.csv('http://biodiversityengagementindicator.com/csvs/WEBHOSE-DETAIL.csv')
+news_b <- read.csv('http://biodiversityengagementindicator.com/csvs/WEBHOSE-BASELINE.csv')
 news_total <- sum(news_b$baseline, na.rm=T)
 
 news_d <- news_d %>%

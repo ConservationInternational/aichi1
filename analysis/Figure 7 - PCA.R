@@ -178,9 +178,10 @@ country_data_sum$continent <- as.factor(country_data_sum$continent)
 
 labelcountries <- c('Mexico', 'Ecuador', 'New Zealand', 'Kazakhstan', 'Kyrgyzstan', 'Bolivia', 'Guatemala',
                     'Dominican Republic', 'Bolivia', 'Peru', 'Colombia', 'Ethiopia', 'Kenya', 'Tanzania', 'Ghana', 
-                    'Uganda', 'Fiji', 'United States', 'Canada', 'Australia', 'Honduras', 'El Salvador', 'Panama',
-                    'Philippines', 'Nepal', "Austria", "Lebanon", "Mauritania", 
-                    'Venezuela', 'Russia', 'South Africa', 'Zimbabwe')
+                    'Fiji', 'United States', 'Canada', 'Australia', 'Honduras', 'El Salvador', 'Panama',
+                    'Philippines', 'Nepal', 
+                    'Venezuela', 'South Africa', 'Zimbabwe', "Costa Rica", "Chile", 
+                    "Nicaragua", "United Kingdom", "Spain")
 
 unique_ctr_sum[!unique_ctr_sum %in% labelcountries] <- ''
 

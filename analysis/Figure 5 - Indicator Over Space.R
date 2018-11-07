@@ -193,9 +193,7 @@ ggplot(dat, aes(long, lat, group=group)) +
         axis.title.y=element_blank(),
         panel.border=element_blank(),panel.grid.major=element_blank(),
         panel.grid.minor=element_blank(),plot.background=element_blank(),
-        panel.background=element_rect(fill="#FFFFFF"),
-        legend.position="bottom",
-        legend.key.width=unit(2,"cm"))
+        panel.background=element_rect(fill="#FFFFFF"))
 ggsave('C://Git/aichi1/analysis/Figure 5 - Indicator over Space.png', height=3, width=8)
 
 ##Just plot climate change
@@ -270,4 +268,4 @@ endang <- ggplot(dat_end, aes(long, lat, group=group)) +
 
 plot_grid(clim, endang, labels="AUTO")
 
-ggsave('C://Git/aichi1/analysis/Figure 5 - Keywords Over Space.png', height=6, width=20)
+ggsave('C://Git/aichi1/analysis/Figure 6 - Keywords Over Space.png', height=5, width=20)
